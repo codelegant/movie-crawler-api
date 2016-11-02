@@ -7,6 +7,9 @@ const headers = {
 };
 
 const maoyan = (() => ({
+  /**
+   * @return {Promise.<Array>}
+   */
   getCityList() {
     let sitepage = undefined;
     let phInstance = undefined;
@@ -50,6 +53,10 @@ const maoyan = (() => ({
         return cityList;
       });
   },
+  /**
+   * @param cityCode {Number}
+   * @return {Promise.<Object>}
+   */
   getHotMovieList(cityCode = 30) {
     const j = rq.jar();
     const uri = 'http://maoyan.com/films';

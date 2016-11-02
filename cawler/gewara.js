@@ -6,6 +6,10 @@ const headers = {
 
 const gewara = (()=>({
   //城市列表数据使用与淘宝一致
+  /**
+   * @param cityCode {Number}
+   * @return {Promise.<Array>}
+   */
   getHotMovieList(cityCode = 440300){
     const j = rq.jar();
     const uri = 'http://www.gewara.com/movie/searchMovie.xhtml';

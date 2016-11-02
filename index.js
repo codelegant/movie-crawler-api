@@ -1,12 +1,6 @@
 const restify = require('restify');
-const taobao = require('./cawler/taobao');
-const maoyan = require('./cawler/maoyan');
-const gewara = require('./cawler/gewara');
-const chalk = require('chalk');
-const log = console.log;
-const error = msg=>console.log(chalk.red(msg));
-const warn = msg=>console.log(chalk.yellow(msg));
-const info = msg=>console.log(chalk.blue(msg));
+const MongoClient = require('mongodb').MongoClient;
+
 const _mergeWith = require('lodash.mergewith');
 const _merge = require('lodash.merge');
 const _isArray = require('lodash.isarray');
@@ -15,15 +9,24 @@ const _unionWith = require('lodash.unionwith');
 const _unset = require('lodash.unset');
 const _mapValues = require('lodash.mapvalues');
 const _remove = require('lodash.remove');
+const _mapKeys = require('lodash.mapkeys');
+
+const taobao = require('./cawler/taobao');
+const maoyan = require('./cawler/maoyan');
+const gewara = require('./cawler/gewara');
+const cawler = require('./cawler/index');
+const cliLog = require('./util/cli-log');
+const docOperate = require('./db/index');
 
 const server = restify.createServer();
+const url = 'mongodb://api:api@127.0.0.1:3000/movie?authMechanism=SCRAM-SHA-1';
+
 server.get('/taobao/cities', async(req, res)=>res.json(await taobao.getCityList()));
-error('err');
 server.get('/taobao/movies', async(req, res)=> {
   try {
     res.json(await taobao.getHotMovieList());
   } catch (e) {
-    error(e);
+    cliLog.error(e);
   }
 });
 
@@ -90,6 +93,23 @@ server.get('/movies', async(req, res)=> {
   }
 });
 
-server.listen(8080, ()=> {
-  console.log('%s listening at %s', server.name, server.url);
-});
+
+(async()=> {
+  const citiesObj = await cawler.citiesObj();
+  const citiesArr = [];
+  _mapKeys(citiesObj, (cities, key)=> {
+    for (const city of cities) {
+      city.initials = key;
+      citiesArr.push(city);
+    }
+  });
+  MongoClient.connect(url, (err, db)=> {
+    if (err) return cliLog.error(err);
+    docOperate.insertCities(db, ()=>db.close(), citiesArr);
+  });
+})();
+
+
+// server.listen(8080, ()=> {
+//   console.log('%s listening at %s', server.name, server.url);
+// });

@@ -6,6 +6,9 @@ const headers = {
 };
 
 const taobao = (() => ({
+  /**
+   * @return {Promise.<Object>}
+   */
   getCityList() {
     const timeStampStr = Date.now().toString();
     return rq({
@@ -22,13 +25,17 @@ const taobao = (() => ({
     })
       .then(res => JSON.parse(res.replace(/jsonp\d{2,3}\((.+)\);$/, '$1'))['returnValue']);//字段名：[{id,parentId,regionName,cityCode,pinYin}]
   },
-  getHotMovieList() {
+  /**
+   * @param city {number}
+   * @return {Promise.<Array>}
+   */
+  getHotMovieList(city = 440300) {
     return rq({
       uri: 'http://dianying.taobao.com/showList.htm',
       method: 'GET',
       qs: {
         n_s: 'new',
-        city: 440300//深圳
+        city//深圳
       },
       headers,
       transform: body => cheerio.load(body)

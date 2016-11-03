@@ -78,7 +78,7 @@ const maoyan = (() => ({
       do {
         const $_DdList = $_MovieList.find('dd');
         for (const ddIndex in $_DdList) {
-          if (ddIndex < $_DdList.length) {
+          if (ddIndex < $_DdList.length && $_DdList.hasOwnProperty(ddIndex)) {
             const $_Dd = $($_DdList[ddIndex]);
             const id = $_Dd.find('.movie-item a').data('val').replace(/{[a-z]+:(\d+)}/gi, '$1');
             movieList.push({

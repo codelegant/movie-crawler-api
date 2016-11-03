@@ -44,13 +44,13 @@ const taobao = (() => ({
         const movieList = [];
         const $_MovieList = $($('.tab-movie-list')[0]).find('.movie-card-wrap');
         for (const movieIndex in $_MovieList) {
-          if (movieIndex < $_MovieList.length) {
+          if (movieIndex < $_MovieList.length && $_MovieList.hasOwnProperty(movieIndex)) {
             const $_Movie = $($_MovieList[movieIndex]);
 
             const infoList = [];
             const $_InfoList = $_Movie.find('.movie-card-list').find('span');
             for (const infoIndex in $_InfoList) {
-              if (infoIndex < $_InfoList.length) infoList.push($($_InfoList[infoIndex]).text());
+              if (infoIndex < $_InfoList.length && $_InfoList.hasOwnProperty(infoIndex)) infoList.push($($_InfoList[infoIndex]).text());
             }
 
             movieList.push({

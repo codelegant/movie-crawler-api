@@ -29,7 +29,7 @@ const gewara = (()=>({
       let $_MovieList = $(listClassName);
       do {
         for (const movieIndex in $_MovieList) {
-          if (movieIndex < $_MovieList.length) {
+          if (movieIndex < $_MovieList.length && $_MovieList.hasOwnProperty(movieIndex)) {
             const $_Movie = $($_MovieList[movieIndex]);
             if ($_Movie.find('a.redBt').attr('href')) {
               movieList.push({

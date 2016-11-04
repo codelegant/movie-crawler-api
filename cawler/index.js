@@ -9,7 +9,7 @@ const _remove = require('lodash.remove');
 const taobao = require('./taobao');
 const maoyan = require('./maoyan');
 const gewara = require('./gewara');
-const cliLog = require('../util/cli-log');
+const cliLog = require('../util/cliLog');
 
 module.exports = (()=>({
   /**

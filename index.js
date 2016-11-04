@@ -15,7 +15,7 @@ const taobao = require('./cawler/taobao');
 const maoyan = require('./cawler/maoyan');
 const gewara = require('./cawler/gewara');
 const cawler = require('./cawler/index');
-const cliLog = require('./util/cli-log');
+const cliLog = require('./util/cliLog');
 const docOperate = require('./db/index');
 
 const server = restify.createServer();
@@ -53,28 +53,16 @@ server.get('/gewara/movies', async(req, res)=> {
 
 server.get('/cities', async(req, res)=> {
   try {
-    const cityLists = await Promise.all([taobao.getCityList(), maoyan.getCityList()]).then(cityLists=>cityLists);
-    const _arrUnion = (taobao, maoyan)=>_unionWith(taobao, maoyan, (src, target)=> {
-      if (target.id) {
-        _unset(target, 'id');
-        _unset(target, 'parentId');
-        _unset(target, 'pinYin');
-      }
-      if (src.regionName === target.regionName) {
-        return target.cityCode = {taobao: target.cityCode, maoyan: src.cityCode, gewara: target.cityCode};
-      }
-    });
-    let _objMerge = _mergeWith(cityLists[0], cityLists[1],
-      (target, src)=> {
-        if (_isArray(target) && _isArray(src)) {
-          return _arrUnion(target, src);
-        }
-      }
-    );
-    _objMerge = _mapValues(_objMerge, arr=> _remove(arr, city=> _isObject(city.cityCode)));
-    res.json(_objMerge);
+    const docs = await MongoClient
+      .connect(url)
+      .then(db=> {
+        return docOperate.findCities(db, ()=>db.close());
+      });
+    const statusCode = docs.length ? 200 : 404;
+    res.json(statusCode, docs);
   } catch (e) {
-    console.log(e);
+    cliLog.error(e);
+    res.json(500, []);
   }
 });
 
@@ -93,23 +81,33 @@ server.get('/movies', async(req, res)=> {
   }
 });
 
+// (async()=> {
+//   const docs = await MongoClient
+//     .connect(url)
+//     .then(db=> {
+//       return docOperate.findCities(db, ()=>db.close());
+//     });
+//   cliLog.info(docs.length);
+// })();
+// (async()=> {
+//   const citiesObj = await cawler.citiesObj();
+//   const citiesArr = [];
+//   _mapKeys(citiesObj, (cities, key)=> {
+//     for (const city of cities) {
+//
+//       city.initials = key;
+//       citiesArr.push(city);
+//     }
+//   });
+//   MongoClient
+//     .connect(url)
+//     .then(db=> {
+//       docOperate.insertCities(db, citiesArr, ()=>db.close());
+//     })
+//     .catch(err=>cliLog.error(err))
+// })();
 
-(async()=> {
-  const citiesObj = await cawler.citiesObj();
-  const citiesArr = [];
-  _mapKeys(citiesObj, (cities, key)=> {
-    for (const city of cities) {
-      city.initials = key;
-      citiesArr.push(city);
-    }
-  });
-  MongoClient.connect(url, (err, db)=> {
-    if (err) return cliLog.error(err);
-    docOperate.insertCities(db, ()=>db.close(), citiesArr);
-  });
-})();
 
-
-// server.listen(8080, ()=> {
-//   console.log('%s listening at %s', server.name, server.url);
-// });
+server.listen(8080, ()=> {
+  console.log('%s listening at %s', server.name, server.url);
+});

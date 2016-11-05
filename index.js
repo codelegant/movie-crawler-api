@@ -20,7 +20,9 @@ const docOperate = require('./db/index');
 
 const server = restify.createServer();
 const url = 'mongodb://api:api@127.0.0.1:3000/movie?authMechanism=SCRAM-SHA-1';
+
 server.use(restify.queryParser());//使用 req.params，可以获取查询对象
+server.use(restify.authorizationParser());
 
 server.get('/taobao/cities', async(req, res)=>res.json(await taobao.getCityList()));
 server.get('/taobao/movies', async(req, res)=> {
@@ -67,6 +69,9 @@ server.get('/cities', async(req, res, next)=> {
 });
 
 server.post('/cities', async(req, res, next)=> {
+  const basic = req.authorization;
+  if (!basic) return next(new restify.UnauthorizedError('需要验证身份'));
+  if (basic.username !== 'codelegant' || basic.password !== 'codelegant') return next(new restify.UnauthorizedError('身份验证失败'));
   try {
     const citiesObj = await cawler.citiesObj();
     const citiesArr = [];
@@ -85,8 +90,12 @@ server.post('/cities', async(req, res, next)=> {
   }
 });
 
+server.put('/cities', async(req, res, next)=> {
+  //TODO:比较数据列表长度与抓取的列表长度，不同则是更新，相同则不更新
+});
+
 server.get('/movies', async(req, res, next)=> {
-  if (!req.params.cityId) return next(new restify.InvalidArgumentError('只收受 cityId 作为参数'));
+  if (!req.params.cityId) return next(new restify.MissingParameterError('缺少参数 cityId'));
   res.json(req.params.cityId);
   // try {
   //   const movieLists = await Promise.all([taobao.getHotMovieList(), maoyan.getHotMovieList(), gewara.getHotMovieList()])

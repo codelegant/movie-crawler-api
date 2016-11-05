@@ -20,46 +20,15 @@ const docOperate = require('./db/index');
 
 const server = restify.createServer();
 const url = 'mongodb://api:api@127.0.0.1:3000/movie?authMechanism=SCRAM-SHA-1';
+
 server.use(restify.queryParser());//使用 req.params，可以获取查询对象
-
-server.get('/taobao/cities', async(req, res)=>res.json(await taobao.getCityList()));
-server.get('/taobao/movies', async(req, res)=> {
-  try {
-    res.json(await taobao.getHotMovieList());
-  } catch (e) {
-    cliLog.error(e);
-  }
-});
-
-server.get('/maoyan/cities', async(req, res)=> {
-  try {
-    res.json(await maoyan.getCityList());
-  } catch (e) {
-    console.log(e);
-  }
-});
-
-
-server.get('/maoyan/movies', async(req, res)=> {
-  try {
-    res.json(await maoyan.getHotMovieList());
-  } catch (e) {
-    console.log(e);
-  }
-});
-
-server.get('/gewara/movies', async(req, res)=> {
-  res.json(await gewara.getHotMovieList());
-});
-
+server.use(restify.authorizationParser());//使用 req.authorization 获取基本认证的信息
 
 server.get('/cities', async(req, res, next)=> {
   try {
     const docs = await MongoClient
       .connect(url)
-      .then(db=> {
-        return docOperate.findCities(db, ()=>db.close());
-      });
+      .then(db=>docOperate.findCities(db, ()=>db.close()));
     return docs.length ? res.json(200, docs) : next(new restify.NotFoundError('未查询到城市列表'));
   } catch (e) {
     return next(new restify.InternalServerError('获取城市列表失败'));
@@ -68,6 +37,14 @@ server.get('/cities', async(req, res, next)=> {
 
 server.post('/cities', async(req, res, next)=> {
   try {
+    const { basic }=req.authorization;
+    if (! basic || basic.username !== 'codelegant' || basic.password !== 'codelegant') throw Error();
+    const docs = await MongoClient
+      .connect(url)
+      .then(db=>docOperate.findCities(db, ()=>db.close()));
+
+    if (docs.length) return res.send(204);
+
     const citiesObj = await cawler.citiesObj();
     const citiesArr = [];
     _mapKeys(citiesObj, (cities, key)=> {
@@ -76,6 +53,7 @@ server.post('/cities', async(req, res, next)=> {
         citiesArr.push(city);
       }
     });
+
     const length = await MongoClient
       .connect(url)
       .then(db=> docOperate.insertCities(db, citiesArr, ()=>db.close()));
@@ -85,8 +63,38 @@ server.post('/cities', async(req, res, next)=> {
   }
 });
 
+server.put('/cities', async(req, res, next)=> {
+  try {
+    const { basic }=req.authorization;
+    if (! basic || basic.username !== 'codelegant' || basic.password !== 'codelegant')
+      return next(new restify);
+
+    const docs = await MongoClient
+      .connect(url)
+      .then(db=>docOperate.findCities(db, ()=>db.close()));
+
+    const citiesObj = await cawler.citiesObj();
+    const citiesArr = [];
+    _mapKeys(citiesObj, (cities, key)=> {
+      for (const city of cities) {
+        city.initials = key;
+        citiesArr.push(city);
+      }
+    });
+
+    if (docs.length === citiesArr.length) return res.send(204);
+
+    const length = await MongoClient
+      .connect(url)
+      .then(db=> docOperate.insertCities(db, citiesArr, ()=>db.close()));
+    return res.send(length ? 201 : 204);
+  } catch (e) {
+    return next(new restify.InternalServerError('更新城市列表失败'));
+  }
+});
+
 server.get('/movies', async(req, res, next)=> {
-  if (!req.params.cityId) return next(new restify.InvalidArgumentError('只收受 cityId 作为参数'));
+  if (! req.params.cityId) return next(new restify.InvalidArgumentError('只收受 cityId 作为参数'));
   res.json(req.params.cityId);
   // try {
   //   const movieLists = await Promise.all([taobao.getHotMovieList(), maoyan.getHotMovieList(), gewara.getHotMovieList()])

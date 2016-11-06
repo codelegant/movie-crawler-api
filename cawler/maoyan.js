@@ -83,7 +83,7 @@ const maoyan = (() => ({
             const id = $_Dd.find('.movie-item a').data('val').replace(/{[a-z]+:(\d+)}/gi, '$1');
             movieList.push({
               link: {
-                maoyan: `http://www.meituan.com/dianying/${id}?#content`
+                maoyanLink: `http://www.meituan.com/dianying/${id}?#content`
               }, //影片首页，同时也是购票链接
               name: $_Dd.find('.movie-item-title').attr('title'), //名称,
             });

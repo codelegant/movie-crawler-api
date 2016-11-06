@@ -34,7 +34,7 @@ const gewara = (()=>({
             if ($_Movie.find('a.redBt').attr('href')) {
               movieList.push({
                 link: {
-                  gewara: 'http://www.gewara.com' + $_Movie.find('a.redBt').attr('href')
+                  gewaraLink: 'http://www.gewara.com' + $_Movie.find('a.redBt').attr('href')
                 }, //影片首页，同时也是购票链接
                 name: $_Movie.find('.ui_movieType').attr('title'), //名称,
               });

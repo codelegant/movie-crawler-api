@@ -25,7 +25,11 @@ module.exports = (()=>({
           _unset(target, 'pinYin');
         }
         if (src.regionName === target.regionName) {
-          return target.cityCode = {taobao: target.cityCode, maoyan: src.cityCode, gewara: target.cityCode};
+          return target.cityCode = {
+            taobaoCityCode: target.cityCode,
+            maoyanCityCode: src.cityCode,
+            gewaraCityCode: target.cityCode
+          };
         }
       });
       let _objMerge = _mergeWith(cityLists[0], cityLists[1],

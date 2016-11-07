@@ -54,7 +54,7 @@ const taobao = (() => ({
             }
 
             movieList.push({
-              link: {taobao: $_Movie.find('.movie-card-buy').attr('href')}, //影片首页，同时也是购票链接
+              link: { taobaoLink: $_Movie.find('.movie-card-buy').attr('href') }, //影片首页，同时也是购票链接
               img: $_Movie.find('.movie-card-poster').children('img').attr('src'), //缩略图
               name: $_Movie.find('.movie-card-name').children('.bt-l').text(), //名称,
               infoList //介绍信息，导演，主演等

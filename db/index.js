@@ -1,6 +1,4 @@
-const MongoClient = require('mongodb').MongoClient;
-const format = require('util').format;
-
+const ObjectID = require('mongodb').ObjectID;
 const cliLog = require('../util/cliLog');
 
 module.exports = (()=>({
@@ -48,7 +46,15 @@ module.exports = (()=>({
    * @return {*|Promise.<Array>}
    */
   findCityById(db, callback, id){
-    return this.findCities(db, callback, {id});
+    const _id=new ObjectID(id);
+    return db
+      .collection('cities')
+      .findOne({_id})
+      .then(docs=> {
+        cliLog.success(`成功获取 _id:${id} 的城市数据`);
+        callback(docs);
+        return docs;
+      });
   }
 }))();
 

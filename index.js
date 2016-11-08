@@ -28,7 +28,7 @@ server.get('/cities', async(req, res, next)=> {
   try {
     const docs = await MongoClient
       .connect(url)
-      .then(db=>docOperate.findCities(db, ()=>db.close()));
+      .then(db=>docOperate.findMany(db, 'cities', ()=>db.close()));
     return docs.length ? res.json(200, docs) : next(new restify.NotFoundError('未查询到城市列表'));
   } catch (e) {
     return next(new restify.InternalServerError('获取城市列表失败'));
@@ -37,13 +37,13 @@ server.get('/cities', async(req, res, next)=> {
 
 server.post('/cities', async(req, res, next)=> {
   try {
-    const { basic }=req.authorization;
-    if (! basic || basic.username !== 'codelegant' || basic.password !== 'codelegant') {
+    const {basic}=req.authorization;
+    if (!basic || basic.username !== 'codelegant' || basic.password !== 'codelegant') {
       return next(new restify.UnauthorizedError('身份验证失败'));
     }
     const docs = await MongoClient
       .connect(url)
-      .then(db=>docOperate.findCities(db, ()=>db.close()));
+      .then(db=>docOperate.findMany(db, 'cities', ()=>db.close()));
 
     if (docs.length) return res.send(204);
 
@@ -58,7 +58,7 @@ server.post('/cities', async(req, res, next)=> {
 
     const length = await MongoClient
       .connect(url)
-      .then(db=> docOperate.insertCities(db, citiesArr, ()=>db.close()));
+      .then(db=> docOperate.insert(db, citiesArr, 'cities', ()=>db.close()));
     return res.send(length ? 201 : 204);
   } catch (e) {
     return next(new restify.InternalServerError('抓取或插入城市列表失败'));
@@ -67,13 +67,13 @@ server.post('/cities', async(req, res, next)=> {
 
 server.put('/cities', async(req, res, next)=> {
   try {
-    const { basic }=req.authorization;
-    if (! basic || basic.username !== 'codelegant' || basic.password !== 'codelegant')
+    const {basic}=req.authorization;
+    if (!basic || basic.username !== 'codelegant' || basic.password !== 'codelegant')
       return next(new restify);
 
     const docs = await MongoClient
       .connect(url)
-      .then(db=>docOperate.findCities(db, ()=>db.close()));
+      .then(db=>docOperate.findMany(db, 'cities', ()=>db.close()));
 
     const citiesObj = await cawler.citiesObj();
     const citiesArr = [];
@@ -88,7 +88,7 @@ server.put('/cities', async(req, res, next)=> {
 
     const length = await MongoClient
       .connect(url)
-      .then(db=> docOperate.insertCities(db, citiesArr, ()=>db.close()));
+      .then(db=> docOperate.insert(db, citiesArr, 'cities', ()=>db.close()));
     return res.send(length ? 201 : 204);
   } catch (e) {
     return next(new restify.InternalServerError('更新城市列表失败'));
@@ -97,15 +97,14 @@ server.put('/cities', async(req, res, next)=> {
 
 server.get('/movies', async(req, res, next)=> {
   try {
-
-    const { cityId } = req.params;
-    if (! cityId) return next(new restify.InvalidArgumentError('只收受 cityId 作为参数'));
+    const {cityId} = req.params;
+    if (!cityId) return next(new restify.InvalidArgumentError('只收受 cityId 作为参数'));
 
     const connect = MongoClient.connect(url);
     const city = await connect
-      .then(db=>docOperate.findCityById(db, ()=>db.close(), cityId));
+      .then(db=>docOperate.findById(db, 'cities', ()=>db.close(), cityId));
 
-    const { taobaoCityCode, maoyanCityCode, gewaraCityCode }=city.cityCode;
+    const {taobaoCityCode, maoyanCityCode, gewaraCityCode}=city.cityCode;
     const movieLists = await Promise
       .all([
         taobao.getHotMovieList(taobaoCityCode),
@@ -118,7 +117,6 @@ server.get('/movies', async(req, res, next)=> {
         if (src.name == target.name) return target.link = _merge(src.link, target.link);
       });
     _movieList = _remove(_movieList, movie=>movie.link.taobaoLink);
-    cliLog.warn(_movieList.length);
     res.json(200, _movieList);
   } catch (e) {
     console.dir(e);

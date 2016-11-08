@@ -100,10 +100,13 @@ server.get('/movies', async(req, res, next)=> {
     const {cityId} = req.params;
     if (!cityId) return next(new restify.InvalidArgumentError('只收受 cityId 作为参数'));
 
-    const connect = MongoClient.connect(url);
-    const city = await connect
+    //region 获取各个网站对就的 cityCode
+    const city = await MongoClient
+      .connect(url)
       .then(db=>docOperate.findById(db, 'cities', ()=>db.close(), cityId));
+    //endregion
 
+    //region 抓取热门电影
     const {taobaoCityCode, maoyanCityCode, gewaraCityCode}=city.cityCode;
     const movieLists = await Promise
       .all([
@@ -117,7 +120,28 @@ server.get('/movies', async(req, res, next)=> {
         if (src.name == target.name) return target.link = _merge(src.link, target.link);
       });
     _movieList = _remove(_movieList, movie=>movie.link.taobaoLink);
-    res.json(200, _movieList);
+    //endregion
+
+    _movieList = _movieList.map(ele=> {
+      ele.cityId = cityId;
+      ele.lastUpdated = new Date();
+      return ele;
+    });
+
+    //region 存入数据库
+    await MongoClient
+      .connect(url)
+      .then(db=> {
+        docOperate.insert(db, _movieList, 'movies', ()=>db.close());
+        db.collection('movies').createIndex({lastUpdated: 1}, {expireAfterSeconds: 3600});
+      });
+    //endregion
+
+    const docs = await MongoClient
+      .connect(url)
+      .then(db=>docOperate.findMany(db, 'movies', ()=>db.close()));
+
+    return docs.length ? res.json(200, docs) : next(new restify.NotFoundError('未查询到热门电影列表'));
   } catch (e) {
     console.dir(e);
     return next(new restify.InternalServerError('获取热门电影失败'));

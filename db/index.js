@@ -10,8 +10,7 @@ module.exports = (()=>({
    * @param callback {Function}
    * @return {Promise.<Object>}
    */
-  insert(db, docs, collection, callback = ()=> {
-  }){
+  insert(db, docs, collection, callback){
     return db
       .collection(collection)
       .insertMany(docs)
@@ -30,8 +29,7 @@ module.exports = (()=>({
    * @param query {Object} 查询条件
    * @return {Promise.<Array>}
    */
-  findMany(db, collection, callback = ()=> {
-  }, query = {}){
+  findMany(db, collection, callback, query = {}){
     return db
       .collection(collection)
       .find(query)
@@ -50,9 +48,8 @@ module.exports = (()=>({
    * @param id {Number}
    * @return {*|Promise.<Array>}
    */
-  findById(db, collection, callback = ()=> {
-  }, id){
-    const _id=new ObjectID(id);
+  findById(db, collection, callback, id){
+    const _id = new ObjectID(id);
     return db
       .collection(collection)
       .findOne({_id})

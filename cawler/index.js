@@ -6,10 +6,13 @@ const _unset = require('lodash.unset');
 const _mapValues = require('lodash.mapvalues');
 const _remove = require('lodash.remove');
 const _mapKeys = require('lodash.mapkeys');
+const _merge = require('lodash.merge');
+const MongoClient = require('mongodb').MongoClient;
 
 const taobao = require('./taobao');
 const maoyan = require('./maoyan');
 const gewara = require('./gewara');
+const docOperate = require('../db/index');
 const cliLog = require('../util/cliLog');
 
 module.exports = (()=>({
@@ -51,5 +54,34 @@ module.exports = (()=>({
       }
     });
     return citiesArr;
+  },
+  /**
+   * 使用 cityId 获取热门电影列表
+   * @param cityId {String}
+   * @return {Array}
+   */
+  async movies(cityId){
+    const url = 'mongodb://api:api@127.0.0.1:3000/movie?authMechanism=SCRAM-SHA-1';
+    //region 获取各个网站对就的 cityCode
+    const city = await MongoClient
+      .connect(url)
+      .then(db=>docOperate.findById(db, 'cities', cityId, ()=>db.close()));
+    //endregion
+
+    //region 抓取热门电影
+    const {taobaoCityCode, maoyanCityCode, gewaraCityCode}=city.cityCode;
+    const movieLists = await Promise
+      .all([
+        taobao.getHotMovieList(taobaoCityCode),
+        maoyan.getHotMovieList(maoyanCityCode),
+        gewara.getHotMovieList(gewaraCityCode),
+      ])
+      .then(movieLists=>movieLists);
+    let movies = _unionWith(movieLists[0], movieLists[1], movieLists[2],
+      (src, target)=> {
+        if (src.name == target.name) return target.link = _merge(src.link, target.link);
+      });
+    return _remove(movies, movie=>movie.link.taobaoLink);
+    //endregion
   }
 }))();

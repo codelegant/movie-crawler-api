@@ -16,7 +16,7 @@ module.exports = (()=>({
       .insertMany(docs)
       .then(res=> {
         if (res.result.ok !== 1) return cliLog.error('插入数据失败');
-        cliLog.success(`成功插入${res.ops.length}条数据`);
+        cliLog.success(`${collection}: 插入 ${res.ops.length} 条数据`);
         callback(res);
         return res.ops.length;
       });
@@ -35,7 +35,7 @@ module.exports = (()=>({
       .find(query)
       .toArray()
       .then(docs=> {
-        cliLog.success(`成功获取${docs.length}条数据`);
+        cliLog.success(`${collection}: 获取 ${docs.length} 条数据`);
         callback(docs);
         return docs;
       });
@@ -54,7 +54,7 @@ module.exports = (()=>({
       .collection(collection)
       .findOne({_id})
       .then(docs=> {
-        cliLog.success(`成功获取 _id:${id} 的数据`);
+        cliLog.success(`${collection}: 获取 _id:${id} 的数据`);
         callback(docs);
         return docs;
       });

@@ -31,6 +31,7 @@ server.get('/cities', async(req, res, next)=> {
       .then(db=>docOperate.findMany(db, 'cities', ()=>db.close()));
     return docs.length ? res.json(200, docs) : next(new restify.NotFoundError('未查询到城市列表'));
   } catch (e) {
+    cliLog.error(e);
     return next(new restify.InternalServerError('获取城市列表失败'));
   }
 });
@@ -47,20 +48,14 @@ server.post('/cities', async(req, res, next)=> {
 
     if (docs.length) return res.send(204);
 
-    const citiesObj = await cawler.citiesObj();
-    const citiesArr = [];
-    _mapKeys(citiesObj, (cities, key)=> {
-      for (const city of cities) {
-        city.initials = key;
-        citiesArr.push(city);
-      }
-    });
+    const citiesArr = await cawler.cities();
 
     const length = await MongoClient
       .connect(url)
       .then(db=> docOperate.insert(db, citiesArr, 'cities', ()=>db.close()));
     return res.send(length ? 201 : 204);
   } catch (e) {
+    cliLog.error(e);
     return next(new restify.InternalServerError('抓取或插入城市列表失败'));
   }
 });
@@ -75,22 +70,15 @@ server.put('/cities', async(req, res, next)=> {
       .connect(url)
       .then(db=>docOperate.findMany(db, 'cities', ()=>db.close()));
 
-    const citiesObj = await cawler.citiesObj();
-    const citiesArr = [];
-    _mapKeys(citiesObj, (cities, key)=> {
-      for (const city of cities) {
-        city.initials = key;
-        citiesArr.push(city);
-      }
-    });
-
-    if (docs.length === citiesArr.length) return res.send(204);
+    const cities = await cawler.cities();
+    if (docs.length === cities.length) return res.send(204);
 
     const length = await MongoClient
       .connect(url)
-      .then(db=> docOperate.insert(db, citiesArr, 'cities', ()=>db.close()));
+      .then(db=> docOperate.insert(db, cities, 'cities', ()=>db.close()));
     return res.send(length ? 201 : 204);
   } catch (e) {
+    cliLog.error(e);
     return next(new restify.InternalServerError('更新城市列表失败'));
   }
 });
@@ -98,7 +86,14 @@ server.put('/cities', async(req, res, next)=> {
 server.get('/movies', async(req, res, next)=> {
   try {
     const {cityId} = req.params;
-    if (!cityId) return next(new restify.InvalidArgumentError('只收受 cityId 作为参数'));
+    if (!cityId) return next(new restify.InvalidArgumentError('只接受 cityId 作为参数'));
+
+    const getDocs = ()=>MongoClient
+      .connect(url)
+      .then(db=>docOperate.findMany(db, 'movies', ()=>db.close()));
+
+    let cities = await getDocs();
+    if (cities.length) return res.json(200, cities);//有数据则是直接返回
 
     //region 获取各个网站对就的 cityCode
     const city = await MongoClient
@@ -133,27 +128,37 @@ server.get('/movies', async(req, res, next)=> {
       .connect(url)
       .then(db=> {
         docOperate.insert(db, _movieList, 'movies', ()=>db.close());
-        db.collection('movies').createIndex({lastUpdated: 1}, {expireAfterSeconds: 3600});
+        db.collection('movies').createIndex({lastUpdated: 1}, {expireAfterSeconds: 3600}).then(()=>db.close());
       });
     //endregion
 
-    const docs = await MongoClient
-      .connect(url)
-      .then(db=>docOperate.findMany(db, 'movies', ()=>db.close()));
-
-    return docs.length ? res.json(200, docs) : next(new restify.NotFoundError('未查询到热门电影列表'));
+    cities = await getDocs();
+    return cities.length ? res.json(200, cities) : next(new restify.NotFoundError('未查询到热门电影列表'));
   } catch (e) {
-    console.dir(e);
+    cliLog.error(e);
     return next(new restify.InternalServerError('获取热门电影失败'));
   }
 });
 
+server.put('/movies', (req, res, next)=> {
+  try {
+    const {cityId} = req.params;
+    if (!cityId) return next(new restify.InvalidArgumentError('只接受 cityId 作为参数'));
+  } catch (e) {
+    cliLog.error(e);
+    return next(new restify.InternalServerError('更新电影列表信息失败'));
+  }
+});
 
-server.get('/movies/:id', async(req, res)=> {
-  res.json(req.params.id);
+server.get('/movies/:id', async(req, res, next)=> {
 });
 
 
 server.listen(8080, ()=> {
   console.log('%s listening at %s', server.name, server.url);
 });
+
+// (async()=>{
+//   const citiesArr = await cawler.cities();
+//   console.log(citiesArr);
+// })();

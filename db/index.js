@@ -15,10 +15,10 @@ module.exports = (()=>({
       .collection(collection)
       .insertMany(docs)
       .then(res=> {
-        if (res.result.ok !== 1) return cliLog.error('插入数据失败');
+        if (res.result.ok !== 1)  throw MongoError('未正确执行插入命令');
         cliLog.success(`${collection}: 插入 ${res.ops.length} 条数据`);
         callback(res);
-        return res.ops.length;
+        return res;
       });
   },
   /**
@@ -45,10 +45,10 @@ module.exports = (()=>({
    * @param db {Db}
    * @param collection {String}
    * @param callback {Function}
-   * @param id {Number}
+   * @param id {String}
    * @return {*|Promise.<Array>}
    */
-  findById(db, collection, callback, id){
+  findById(db, collection, id, callback){
     const _id = new ObjectID(id);
     return db
       .collection(collection)
@@ -58,6 +58,35 @@ module.exports = (()=>({
         callback(docs);
         return docs;
       });
+  },
+  deleteMany(db, collection, query, callback){
+    if (query === {}) throw MongoError('删除操作需要传入过滤条件');
+    return db
+      .collection(collection)
+      .deleteMany(query)
+      .then(res=> {
+        if (res.result.ok !== 1) throw MongoError('未正确执行删除命令');
+        cliLog.success(`${collection}: 删除 ${res.deletedCount} 条数据`);
+        callback(res);
+        return res;
+      })
+  },
+  /**
+   *
+   * @param db {Db}
+   * @param collections {String}
+   * @param indexes {Array}
+   * @param callback {Function}
+   * @return {Promise.<Boolean>}
+   */
+  indexExists(db, collections, indexes, callback){
+    return db
+      .collection(collections)
+      .indexExists(indexes)
+      .then(res=> {
+        callback(res);
+        return res;
+      })
   }
 }))();
 

@@ -12,7 +12,7 @@ const MongoClient = require('mongodb').MongoClient;
 const taobao = require('./taobao');
 const maoyan = require('./maoyan');
 const gewara = require('./gewara');
-const docOperate = require('../db/index');
+const MovieDb = require('../db/MovieDb');
 const cliLog = require('../util/cliLog');
 
 module.exports = (()=>({
@@ -61,11 +61,9 @@ module.exports = (()=>({
    * @return {Array}
    */
   async movies(cityId){
-    const url = 'mongodb://api:api@127.0.0.1:3000/movie?authMechanism=SCRAM-SHA-1';
     //region 获取各个网站对就的 cityCode
-    const city = await MongoClient
-      .connect(url)
-      .then(db=>docOperate.findById(db, 'cities', cityId, ()=>db.close()));
+    const movieDb = new MovieDb();
+    const city = await movieDb.findById('cities', cityId);
     //endregion
 
     //region 抓取热门电影

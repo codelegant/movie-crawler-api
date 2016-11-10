@@ -80,7 +80,6 @@ class MovieDb {
       .connect
       .then(
         db=>db
-          .connect
           .collection(collection)
           .findOne({_id})
           .then(docs=> {

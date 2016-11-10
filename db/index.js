@@ -1,7 +1,13 @@
 const ObjectID = require('mongodb').ObjectID;
+const MongoClient = require('mongodb').MongoClient;
+
 const cliLog = require('../util/cliLog');
+const url = 'mongodb://api:api@127.0.0.1:3000/movie?authMechanism=SCRAM-SHA-1';
 
 module.exports = (()=>({
+  client(url = url){
+    return MongoClient.connect(url);
+  },
   /**
    * 插入城市列表数据
    * @param db {Db}
@@ -59,6 +65,14 @@ module.exports = (()=>({
         return docs;
       });
   },
+  /**
+   *
+   * @param db {Db}
+   * @param collection {String}
+   * @param query {Object}
+   * @param callback {Function}
+   * @return {Promise.<Object>}
+   */
   deleteMany(db, collection, query, callback){
     if (query === {}) throw MongoError('删除操作需要传入过滤条件');
     return db
@@ -74,19 +88,38 @@ module.exports = (()=>({
   /**
    *
    * @param db {Db}
-   * @param collections {String}
+   * @param collection {String}
    * @param indexes {Array}
    * @param callback {Function}
    * @return {Promise.<Boolean>}
    */
-  indexExists(db, collections, indexes, callback){
+  indexExists(db, collection, indexes, callback){
     return db
-      .collection(collections)
+      .collection(collection)
       .indexExists(indexes)
       .then(res=> {
         callback(res);
         return res;
       })
+  },
+  /**
+   *
+   * @param db {Db}
+   * @param collection {String}
+   * @param callback {Function}
+   * @return {boolean}
+   */
+  async collectionExists(db, collection, callback){
+    const result = await db.listCollections().toArray().then(collections=>collections);
+    let exists = false;
+    for (const ele of result) {
+      if (ele.name === collection) {
+        exists = true;
+        break;
+      }
+    }
+    callback();
+    return exists;
   }
 }))();
 

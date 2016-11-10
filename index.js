@@ -1,72 +1,71 @@
 const restify = require('restify');
-const MongoClient = require('mongodb').MongoClient;
 
 const cawler = require('./cawler/index');
 const cliLog = require('./util/cliLog');
-const dbController = require('./db/index');
+const MovieDb = require('./db/MovieDb');
 
 const server = restify.createServer();
-const url = 'mongodb://api:api@127.0.0.1:3000/movie?authMechanism=SCRAM-SHA-1';
 
 server.use(restify.queryParser());//使用 req.params，可以获取查询对象
 server.use(restify.authorizationParser());//使用 req.authorization 获取基本认证的信息
 
-server.get('/cities', async(req, res, next)=> {
-  try {
-    const docs = await MongoClient
-      .connect(url)
-      .then(db=>dbController.findMany(db, 'cities', ()=>db.close()));
-    return docs.length
-      ? res.json(200, docs)
-      : next(new restify.NotFoundError('未查询到城市列表'));
-  } catch (e) {
-    cliLog.error(e);
-    return next(new restify.InternalServerError('获取城市列表失败'));
-  }
-});
+server.get('/cities',
+  async(req, res, next)=> {
+    try {
 
-server.post('/cities', async(req, res, next)=> {
+      const movieDb = new MovieDb();
+      const docs = await movieDb.findMany('cities');
+
+      return docs.length
+        ? res.json(200, docs)
+        : next(new restify.NotFoundError('未查询到城市列表'));
+    } catch (e) {
+      cliLog.error(e);
+      return next(new restify.InternalServerError('获取城市列表失败'));
+    }
+  });
+
+server.post('/cities',
+  async(req, res, next)=> {
+    try {
+      const {basic}=req.authorization;
+      if (!basic || basic.username !== 'codelegant' || basic.password !== 'codelegant') {
+        return next(new restify.UnauthorizedError('身份验证失败'));
+      }
+      const movieDb = new MovieDb();
+      const docs = await movieDb.findMany('cities');
+      if (docs.length) return res.send(204);
+      return next();
+    } catch (e) {
+      return next(new restify.InternalServerError('抓取或插入城市列表失败'));
+    }
+  },
+  async(req, res, next)=> {
+    try {
+      const citiesArr = await cawler.cities();
+      const movieDb = new MovieDb();
+      const result = await movieDb.insert('cities', citiesArr);
+
+      return res.send(result.ops.length ? 201 : 204);
+    } catch (e) {
+      return next(new restify.InternalServerError('抓取或插入城市列表失败'));
+    }
+  });
+
+server.put('/cities', async(req, res, next)=> {
   try {
     const {basic}=req.authorization;
     if (!basic || basic.username !== 'codelegant' || basic.password !== 'codelegant') {
       return next(new restify.UnauthorizedError('身份验证失败'));
     }
-    const docs = await MongoClient
-      .connect(url)
-      .then(db=>dbController.findMany(db, 'cities', ()=>db.close()));
 
-    if (docs.length) return res.send(204);
-
-    const citiesArr = await cawler.cities();
-
-    const res = await MongoClient
-      .connect(url)
-      .then(db=> dbController.insert(db, citiesArr, 'cities', ()=>db.close()));
-    return res.send(res.ops.length ? 201 : 204);
-  } catch (e) {
-    cliLog.error(e);
-    return next(new restify.InternalServerError('抓取或插入城市列表失败'));
-  }
-});
-
-server.put('/cities', async(req, res, next)=> {
-  try {
-    const {basic}=req.authorization;
-    if (!basic || basic.username !== 'codelegant' || basic.password !== 'codelegant')
-      return next(new restify);
-
-    const docs = await MongoClient
-      .connect(url)
-      .then(db=>dbController.findMany(db, 'cities', ()=>db.close()));
+    const movieDb = new MovieDb();
+    await movieDb.deleteMany('cities', {});
 
     const cities = await cawler.cities();
-    if (docs.length === cities.length) return res.send(204);
+    const result = await movieDb.insert('cities', citiesArr);
 
-    const res = await MongoClient
-      .connect(url)
-      .then(db=> dbController.insert(db, cities, 'cities', ()=>db.close()));
-
-    return res.send(res.ops.length ? 201 : 204);
+    return res.send(result.ops.length ? 201 : 204);
   } catch (e) {
     cliLog.error(e);
     return next(new restify.InternalServerError('更新城市列表失败'));
@@ -78,20 +77,18 @@ server.get('/movies', async(req, res, next)=> {
       const {cityId} = req.params;
       if (!cityId) return next(new restify.InvalidArgumentError('只接受 cityId 作为参数'));
 
-      const moviesExists = await MongoClient
-        .connect(url)
-        .then(async db=>await dbController.collectionExists(db, 'movies', ()=>db.close()));
+      const movieDb = new MovieDb();
+
+      const moviesExists = await movieDb.collectionExists('movies', false);
 
       if (!moviesExists) {
-        await MongoClient.connect(url).then(db=>db.createCollection('movies'));
+        await movieDb.client.then(db=>db.createCollection('movies'));
         return next();
       }
 
-      let docs = await MongoClient
-        .connect(url)
-        .then(db=>dbController.findMany(db, 'movies', ()=>db.close()));
+      const docs = await movieDb.findMany('movies', true, {cityId});
       if (docs.length) return res.json(200, docs);//有数据则是直接返回
-      return next();
+      return next();//从各网站抓取
 
 
     } catch (e) {
@@ -111,26 +108,27 @@ server.get('/movies', async(req, res, next)=> {
         return ele;
       });
 
+      const movieDb = new MovieDb();
+
       //region 索引是否存在
-      const lastUpdatedExists = await MongoClient
-        .connect(url)
-        .then(db=>dbController.indexExists(db, 'movies', ['lastUpdated_1'], ()=>db.close()));
+      const lastUpdatedExists = movieDb.indexExists('movies', ['lastUpdated_1']);
       //endregion
 
-      //region 存入数据库
-      const result = await MongoClient
-        .connect(url)
-        .then(async db=> {
-          !lastUpdatedExists
-          && db
+      //region 存入数据库，插入索引
+      const result = await movieDb.insert('movies', movies);
+
+      !lastUpdatedExists
+      && await movieDb
+        .client
+        .then(
+          db=>db
             .collection('movies')
             .createIndex(
               {lastUpdated: 1},
               {expireAfterSeconds: 3600}
             )
-            .then(()=>db.close());
-          return dbController.insert(db, movies, 'movies', ()=>db.close());
-        });
+            .then(()=>db.close())
+        );
       //endregion
 
       return result.ops.length
@@ -154,34 +152,31 @@ server.put('/movies', async(req, res, next)=> {
       return ele;
     });
 
-    await MongoClient
-      .connect(url)
-      .then(db=>dbController.deleteMany(db, 'movies', {cityId}, ()=>db.close()));
+    const movieDb = new MovieDb();
+    await movieDb.deleteMany('movies', false, {cityId});
 
     //region 索引是否存在
-    const lastUpdatedExists = await MongoClient
-      .connect(url)
-      .then(db=>dbController.indexExists(db, 'movies', ['lastUpdated_1'], ()=>db.close()));
+    const lastUpdatedExists = movieDb.indexExists('movies', ['lastUpdated_1']);
     //endregion
 
-    //region 存入数据库
-    const result = await MongoClient
-      .connect(url)
-      .then(db=> {
-        !lastUpdatedExists
-        && db
+    //region 存入数据库，插入索引
+    const result = await movieDb.insert('movies', movies);
+
+    !lastUpdatedExists
+    && await movieDb
+      .client
+      .then(
+        db=>db
           .collection('movies')
           .createIndex(
             {lastUpdated: 1},
             {expireAfterSeconds: 3600}
-          ).then(()=>db.close());
-        return dbController.insert(db, movies, 'movies', ()=>db.close());
-      });
+          )
+          .then(()=>db.close())
+      );
     //endregion
 
-    return result.ops.length
-      ? res.json(200, result.ops)
-      : next(new restify.NotFoundError('未查询到热门电影列表'));
+    return res.send(result.ops.length ? 201 : 204);
 
   } catch (e) {
     cliLog.error(e);

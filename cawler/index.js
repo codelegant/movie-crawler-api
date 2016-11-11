@@ -22,7 +22,9 @@ module.exports = (()=>({
    * @return {Object|Array}
    */
   async cities (type = 'arr'){
-    const cityLists = await Promise.all([taobao.getCityList(), maoyan.getCityList()]).then(cityLists=>cityLists);
+    const cityLists = await Promise.all([
+      taobao.getCityList(), maoyan.getCityList()
+    ]).then(cityLists=>cityLists);
     const _arrUnion = (taobao, maoyan)=>_unionWith(taobao, maoyan, (src, target)=> {
       if (target.id) {
         _unset(target, 'id');

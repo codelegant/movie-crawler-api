@@ -2,7 +2,8 @@
 const rq = require('request-promise');
 const cheerio = require('cheerio');
 const headers = {
-  'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/53.0.2785.143 Safari/537.36'
+  'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)' +
+  ' AppleWebKit/537.36 (KHTML, like Gecko) Chrome/53.0.2785.143 Safari/537.36'
 };
 
 const taobao = (() => ({
@@ -23,7 +24,9 @@ const taobao = (() => ({
       },
       headers
     })
-      .then(res => JSON.parse(res.replace(/jsonp\d{2,3}\((.+)\);$/, '$1'))['returnValue']);//字段名：[{id,parentId,regionName,cityCode,pinYin}]
+      .then(res =>
+        //字段名：[{id,parentId,regionName,cityCode,pinYin}]
+        JSON.parse(res.replace(/jsonp\d{2,3}\((.+)\);$/, '$1'))['returnValue']);
   },
   /**
    * @param city {number}
@@ -43,6 +46,7 @@ const taobao = (() => ({
       .then($ => {
         const movieList = [];
         const $_MovieList = $($('.tab-movie-list')[0]).find('.movie-card-wrap');
+        //.movie-card-wrap>movie-card-tag>.t-201
         for (const movieIndex in $_MovieList) {
           if (movieIndex < $_MovieList.length
             && $_MovieList.hasOwnProperty(movieIndex)) {
@@ -57,11 +61,31 @@ const taobao = (() => ({
               }
             }
 
+            const taobaoLink = $_Movie
+              .find('.movie-card-buy')
+              .attr('href');
+
+            const img = $_Movie
+              .find('.movie-card-poster')
+              .children('img')
+              .attr('src');
+
+            const name = $_Movie
+              .find('.movie-card-name')
+              .children('.bt-l').text();
+
+            const format = $_Movie
+              .find('.movie-card-tag')
+              .find('i')
+              .attr('class')
+              .slice(2);
+
             movieList.push({
-              link: {taobaoLink: $_Movie.find('.movie-card-buy').attr('href')}, //影片首页，同时也是购票链接
-              img: $_Movie.find('.movie-card-poster').children('img').attr('src'), //缩略图
-              name: $_Movie.find('.movie-card-name').children('.bt-l').text(), //名称,
-              infoList //介绍信息，导演，主演等
+              link: {taobaoLink}, //影片首页，同时也是购票链接
+              img, //缩略图
+              name, //名称,
+              format: format ? ~~format : null,//201(3D-IMAX) 202(3D) 203(IMAX)
+              infoList, //介绍信息，导演，主演等
             });
           }
         }

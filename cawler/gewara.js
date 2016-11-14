@@ -1,7 +1,8 @@
 const rq = require('request-promise');
 const cheerio = require('cheerio');
 const headers = {
-  'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/53.0.2785.143 Safari/537.36'
+  'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)' +
+  ' AppleWebKit/537.36 (KHTML, like Gecko) Chrome/53.0.2785.143 Safari/537.36'
 };
 
 const gewara = (()=>({
@@ -29,14 +30,21 @@ const gewara = (()=>({
       let $_MovieList = $(listClassName);
       do {
         for (const movieIndex in $_MovieList) {
-          if (movieIndex < $_MovieList.length && $_MovieList.hasOwnProperty(movieIndex)) {
+          if (movieIndex < $_MovieList.length
+            && $_MovieList.hasOwnProperty(movieIndex)) {
             const $_Movie = $($_MovieList[movieIndex]);
             if ($_Movie.find('a.redBt').attr('href')) {
+              const gewaraLink = 'http://www.gewara.com'
+                + $_Movie
+                  .find('a.redBt')
+                  .attr('href');
+
+              const name = $_Movie.find('.ui_movieType').attr('title');
               movieList.push({
                 link: {
-                  gewaraLink: 'http://www.gewara.com' + $_Movie.find('a.redBt').attr('href')
+                  gewaraLink: gewaraLink
                 }, //影片首页，同时也是购票链接
-                name: $_Movie.find('.ui_movieType').attr('title'), //名称,
+                name: name, //名称,
               });
             }
           }

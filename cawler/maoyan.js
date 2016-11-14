@@ -4,7 +4,8 @@ const rq = require('request-promise');
 const cheerio = require('cheerio');
 
 const headers = {
-  'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/53.0.2785.143 Safari/537.36'
+  'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)' +
+  ' AppleWebKit/537.36 (KHTML, like Gecko) Chrome/53.0.2785.143 Safari/537.36'
 };
 
 const maoyan = (() => ({
@@ -81,7 +82,10 @@ const maoyan = (() => ({
         for (const ddIndex in $_DdList) {
           if (ddIndex < $_DdList.length && $_DdList.hasOwnProperty(ddIndex)) {
             const $_Dd = $($_DdList[ddIndex]);
-            const id = $_Dd.find('.movie-item a').data('val').replace(/{[a-z]+:(\d+)}/gi, '$1');
+            const id = $_Dd
+              .find('.movie-item a')
+              .data('val')
+              .replace(/{[a-z]+:(\d+)}/gi, '$1');
             movieList.push({
               link: {
                 maoyanLink: `http://www.meituan.com/dianying/${id}?#content`

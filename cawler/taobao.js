@@ -53,9 +53,8 @@ const taobao = (() => ({
             for (const infoIndex in $_InfoList) {
               if (infoIndex < $_InfoList.length
                 && $_InfoList.hasOwnProperty(infoIndex)) {
-                infoList.push($($_InfoList[infoIndex]).text())
+                infoList.push($($_InfoList[infoIndex]).text());
               }
-              ;
             }
 
             movieList.push({

@@ -5,39 +5,20 @@ const cliLog = require('./util/cliLog');
 const MovieDb = require('./db/MovieDb');
 
 const server = restify.createServer();
-
 server.use(restify.queryParser());//使用 req.params，可以获取查询对象
-server.use(restify.authorizationParser());//使用 req.authorization 获取基本认证的信息
 
 server.get('/cities',
   async(req, res, next)=> {
     try {
-
       const movieDb = new MovieDb();
       const docs = await movieDb.findMany('cities');
 
-      return docs.length
-        ? res.json(200, docs)
-        : next(new restify.NotFoundError('未查询到城市列表'));
+      if (docs.length) return res.json(200, docs);//有数据则是直接返回
+      return next();//从各网站抓取
+
     } catch (e) {
       cliLog.error(e);
       return next(new restify.InternalServerError('获取城市列表失败'));
-    }
-  });
-
-server.post('/cities',
-  async(req, res, next)=> {
-    try {
-      const {basic}=req.authorization;
-      if (!basic || basic.username !== 'codelegant' || basic.password !== 'codelegant') {
-        return next(new restify.UnauthorizedError('身份验证失败'));
-      }
-      const movieDb = new MovieDb();
-      const docs = await movieDb.findMany('cities');
-      if (docs.length) return res.send(204);
-      return next();
-    } catch (e) {
-      return next(new restify.InternalServerError('抓取或插入城市列表失败'));
     }
   },
   async(req, res, next)=> {
@@ -45,20 +26,17 @@ server.post('/cities',
       const citiesArr = await cawler.cities();
       const movieDb = new MovieDb();
       const result = await movieDb.insert('cities', citiesArr);
-
-      return res.send(result.ops.length ? 201 : 204);
+      return result.ops.length
+        ? res.json(200, result.ops)
+        : next(new restify.NotFoundError('未查询到城市列表'));
     } catch (e) {
-      return next(new restify.InternalServerError('抓取或插入城市列表失败'));
+      cliLog.error(e);
+      return next(new restify.InternalServerError('获取城市列表失败'));
     }
   });
 
 server.put('/cities', async(req, res, next)=> {
   try {
-    const {basic}=req.authorization;
-    if (!basic || basic.username !== 'codelegant' || basic.password !== 'codelegant') {
-      return next(new restify.UnauthorizedError('身份验证失败'));
-    }
-
     const movieDb = new MovieDb();
     await movieDb.deleteMany('cities', {});
 

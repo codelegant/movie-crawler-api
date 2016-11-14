@@ -7,7 +7,6 @@ const _mapValues = require('lodash.mapvalues');
 const _remove = require('lodash.remove');
 const _mapKeys = require('lodash.mapkeys');
 const _merge = require('lodash.merge');
-const MongoClient = require('mongodb').MongoClient;
 
 const taobao = require('./taobao');
 const maoyan = require('./maoyan');

@@ -1,6 +1,7 @@
 //--harmony-async-await
 const rq = require('request-promise');
 const cheerio = require('cheerio');
+const cliLog = require('../util/cliLog');
 const headers = {
   'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)' +
   ' AppleWebKit/537.36 (KHTML, like Gecko) Chrome/53.0.2785.143 Safari/537.36'
@@ -91,6 +92,7 @@ const taobao = (() => ({
         }
         return movieList;
       })
+      .catch(e => cliLog.error(e));
   }
 }))();
 

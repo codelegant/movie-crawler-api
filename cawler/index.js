@@ -14,7 +14,7 @@ const gewara = require('./gewara');
 const MovieDb = require('../db/MovieDb');
 const cliLog = require('../util/cliLog');
 
-module.exports = (()=>({
+module.exports = (() => ({
   /**
    * 返回数据格式或者对象格式的城市列表数据
    * @param type {String<'arr'|'obj'>}
@@ -22,9 +22,11 @@ module.exports = (()=>({
    */
   async cities (type = 'arr'){
     const cityLists = await Promise.all([
-      taobao.getCityList(), maoyan.getCityList()
-    ]).then(cityLists=>cityLists);
-    const _arrUnion = (taobao, maoyan)=>_unionWith(taobao, maoyan, (src, target)=> {
+        taobao.getCityList(), maoyan.getCityList()
+      ])
+      .then(cityLists => cityLists)
+      .catch(e => cliLog.error(e));
+    const _arrUnion = (taobao, maoyan) => _unionWith(taobao, maoyan, (src, target) => {
       if (target.id) {
         _unset(target, 'id');
         _unset(target, 'parentId');
@@ -39,16 +41,16 @@ module.exports = (()=>({
       }
     });
     let citiesObj = _mergeWith(cityLists[0], cityLists[1],
-      (target, src)=> {
+      (target, src) => {
         if (_isArray(target) && _isArray(src)) {
           return _arrUnion(target, src);
         }
       }
     );
-    citiesObj = _mapValues(citiesObj, arr=> _remove(arr, city=> _isObject(city.cityCode)));
+    citiesObj = _mapValues(citiesObj, arr => _remove(arr, city => _isObject(city.cityCode)));
     if (type === 'obj') return citiesObj;
     const citiesArr = [];
-    _mapKeys(citiesObj, (cities, key)=> {
+    _mapKeys(citiesObj, (cities, key) => {
       for (const city of cities) {
         city.initials = key;
         citiesArr.push(city);
@@ -75,12 +77,13 @@ module.exports = (()=>({
         maoyan.getHotMovieList(maoyanCityCode),
         gewara.getHotMovieList(gewaraCityCode),
       ])
-      .then(movieLists=>movieLists);
+      .then(movieLists => movieLists)
+      .catch(e => cliLog.error(e));
     let movies = _unionWith(movieLists[0], movieLists[1], movieLists[2],
-      (src, target)=> {
+      (src, target) => {
         if (src.name == target.name) return target.link = _merge(src.link, target.link);
       });
-    return _remove(movies, movie=>movie.link.taobaoLink);
+    return _remove(movies, movie => movie.link.taobaoLink);
     //endregion
   }
 }))();

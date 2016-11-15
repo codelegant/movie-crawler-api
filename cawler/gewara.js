@@ -1,11 +1,12 @@
 const rq = require('request-promise');
 const cheerio = require('cheerio');
+const cliLog = require('../util/cliLog');
 const headers = {
   'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)' +
   ' AppleWebKit/537.36 (KHTML, like Gecko) Chrome/53.0.2785.143 Safari/537.36'
 };
 
-const gewara = (()=>({
+const gewara = (() => ({
   //城市列表数据使用与淘宝一致
   /**
    * @param cityCode {Number}
@@ -16,13 +17,15 @@ const gewara = (()=>({
     const uri = 'http://www.gewara.com/movie/searchMovie.xhtml';
     const cookie = rq.cookie(`citycode=${cityCode}`);//设置城市 cookie，深圳
     j.setCookie(cookie, uri);
-    const getOnePageList = (pageNo = 0)=> rq({
+    const getOnePageList = (pageNo = 0) => rq({
       uri,
       jar: j,
       headers,
       qs: {pageNo}
-    }).then(htmlString=>htmlString);
-    return (async()=> {
+    })
+      .then(htmlString => htmlString)
+      .catch(e => cliLog.error(e));
+    return (async() => {
       let movieList = [];
       let pageNo = 0;
       let $ = cheerio.load(await getOnePageList());

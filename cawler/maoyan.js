@@ -2,6 +2,7 @@
 const phantom = require('phantom');
 const rq = require('request-promise');
 const cheerio = require('cheerio');
+const cliLog = require('../util/cliLog');
 
 const headers = {
   'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)' +
@@ -13,7 +14,7 @@ const maoyan = (() => ({
    * @return {Promise.<Array>}
    */
   getCityList() {
-    let sitepage = undefined;
+    let sitePage = undefined;
     let phInstance = undefined;
 
     return phantom
@@ -23,12 +24,12 @@ const maoyan = (() => ({
         return instance.createPage();
       })
       .then(page => {
-        sitepage = page;
+        sitePage = page;
         return page.open('http://maoyan.com/');
       })
       .then(status => {
         if (status !== 'success') throw Error(`StatusCode:${status}`);
-        return sitepage.property('content');
+        return sitePage.property('content');
       })
       .then(content => {
         const $ = cheerio.load(content);
@@ -51,10 +52,11 @@ const maoyan = (() => ({
             }
           }
         }
-        sitepage.close();
+        sitePage.close();
         phInstance.exit();
         return cityList;
-      });
+      })
+      .catch(e => cliLog.error(e));
   },
   /**
    * @param cityCode {Number}
@@ -65,13 +67,15 @@ const maoyan = (() => ({
     const uri = 'http://maoyan.com/films';
     const cookie = rq.cookie(`ci=${cityCode}`);//设置城市 cookie ，深圳
     j.setCookie(cookie, uri);
-    const getOnePageList = (offset = 0) => rq({
-      uri,
-      jar: j,
-      headers,
-      qs: {showType: 1, offset}
-    })
-      .then(htmlString => htmlString);
+    const getOnePageList = (offset = 0) =>
+      rq({
+        uri,
+        jar: j,
+        headers,
+        qs: {showType: 1, offset}
+      })
+        .then(htmlString => htmlString)
+        .catch(e => cliLog.error(e));
     return (async() => {
       let movieList = [];
       let offset = 0;

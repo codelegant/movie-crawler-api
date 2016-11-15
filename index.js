@@ -87,11 +87,10 @@ server.get('/movies', async (req, res, next) => {
       const movieDb = new MovieDb();
 
       //region 索引是否存在
-      const lastUpdatedExists = movieDb.indexExists('movies', [ 'lastUpdated_1' ], false);
+      const lastUpdatedExists = await movieDb.indexExists('movies', [ 'lastUpdated_1' ], false);
       //endregion
-
       //region 存入数据库，插入索引
-      const result = await movieDb.insert('movies', movies);
+      const result = await movieDb.insert('movies', movies, lastUpdatedExists);
 
       ! lastUpdatedExists
       && await movieDb
@@ -132,11 +131,11 @@ server.put('/movies', async (req, res, next) => {
     await movieDb.deleteMany('movies', false, { cityId });
 
     //region 索引是否存在
-    const lastUpdatedExists = movieDb.indexExists('movies', [ 'lastUpdated_1' ]);
+    const lastUpdatedExists = await movieDb.indexExists('movies', [ 'lastUpdated_1' ], false);
     //endregion
 
     //region 存入数据库，插入索引
-    const result = await movieDb.insert('movies', movies);
+    const result = await movieDb.insert('movies', movies, lastUpdatedExists);
 
     ! lastUpdatedExists
     && await movieDb

@@ -150,7 +150,6 @@ class MovieDb {
    * @return {Promise.<Boolean>}
    */
   async collectionExists (collection, close = true) {
-    //FIXME 返回的不是布尔值，而是集合数组
     return this
       .connect
       .then(
@@ -166,7 +165,7 @@ class MovieDb {
               }
             }
             close && db.close();
-            return collections
+            return exists
           })
       )
       .catch(e => cliLog.log(e));

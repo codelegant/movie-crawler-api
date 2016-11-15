@@ -1,7 +1,7 @@
 const restify = require('restify');
 
 const cawler = require('./cawler/index');
-const cliLog = require('./libsk/cliLog');
+const cliLog = require('./libs/cliLog');
 const MovieDb = require('./db/MovieDb');
 
 const server = restify.createServer();

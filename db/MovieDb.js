@@ -4,12 +4,12 @@ const MongoClient = require('mongodb').MongoClient;
 const cliLog = require('../libs/cliLog');
 
 class MovieDb {
-  constructor(url = 'mongodb://api:api@127.0.0.1:1000/movie?authMechanism=SCRAM-SHA-1') {
+  constructor (url = 'mongodb://api:api@127.0.0.1:1000/movie?authMechanism=SCRAM-SHA-1') {
     this.url = url;
     this.connect = MongoClient.connect(this.url);
   }
 
-  get client() {
+  get client () {
     return this.connect;
   }
 
@@ -21,7 +21,7 @@ class MovieDb {
    * @param callback {Function}
    * @return {Promise.<Object>}
    */
-  insert(collection, docs, close = true, callback = () => {
+  insert (collection, docs, close = true, callback = () => {
   }) {
     return this
       .connect
@@ -47,7 +47,7 @@ class MovieDb {
    * @param collection {String}
    * @return {Promise.<Array>}
    */
-  findMany(collection, close = true, query = {}, callback = () => {
+  findMany (collection, close = true, query = {}, callback = () => {
   }) {
     return this
       .connect
@@ -73,7 +73,7 @@ class MovieDb {
    * @param callback {Function}
    * @return {*|Promise.<Array>}
    */
-  findById(collection, id, close = true, callback = () => {
+  findById (collection, id, close = true, callback = () => {
   }) {
     const _id = new ObjectID(id);
     return this
@@ -81,7 +81,7 @@ class MovieDb {
       .then(
         db => db
           .collection(collection)
-          .findOne({_id})
+          .findOne({ _id })
           .then(docs => {
             cliLog.success(`${collection}: 获取 _id:${id} 的数据`);
             callback(docs);
@@ -99,7 +99,7 @@ class MovieDb {
    * @param callback {Function}
    * @return {Promise.<Object>}
    */
-  deleteMany(collection, close = true, query, callback = () => {
+  deleteMany (collection, close = true, query, callback = () => {
   }) {
     return this
       .connect
@@ -126,7 +126,7 @@ class MovieDb {
    * @param callback {Function}
    * @return {Promise.<Boolean>}
    */
-  indexExists(collection, indexes, close = true, callback = () => {
+  indexExists (collection, indexes, close = true, callback = () => {
   }) {
     return this
       .connect
@@ -149,7 +149,7 @@ class MovieDb {
    * @param close {Boolean}
    * @return {Promise.<Boolean>}
    */
-  async collectionExists(collection, close = true) {
+  async collectionExists (collection, close = true) {
     //FIXME 返回的不是布尔值，而是集合数组
     return this
       .connect

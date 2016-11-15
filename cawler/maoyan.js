@@ -37,14 +37,14 @@ const maoyan = (() => ({
         const cityList = {};
         for (const listIndex in $_CityList) {
           if (listIndex < $_CityList.length && $_CityList.hasOwnProperty(listIndex)) {
-            const $_List = $($_CityList[listIndex]);
+            const $_List = $($_CityList[ listIndex ]);
             const key = $_List.find('span').text();
-            cityList[key] = [];
+            cityList[ key ] = [];
             const $_AList = $_List.find('a');
             for (const aIndex in $_AList) {
               if (aIndex < $_AList.length && $_AList.hasOwnProperty(aIndex)) {
-                const $_A = $($_AList[aIndex]);
-                cityList[key].push({
+                const $_A = $($_AList[ aIndex ]);
+                cityList[ key ].push({
                   regionName: $_A.text(),
                   cityCode: Number($_A.attr('data-ci'))
                 });
@@ -72,11 +72,11 @@ const maoyan = (() => ({
         uri,
         jar: j,
         headers,
-        qs: {showType: 1, offset}
+        qs: { showType: 1, offset }
       })
         .then(htmlString => htmlString)
         .catch(e => cliLog.error(e));
-    return (async() => {
+    return (async () => {
       let movieList = [];
       let offset = 0;
       let $ = cheerio.load(await getOnePageList());
@@ -86,7 +86,7 @@ const maoyan = (() => ({
         const $_DdList = $_MovieList.find('dd');
         for (const ddIndex in $_DdList) {
           if (ddIndex < $_DdList.length && $_DdList.hasOwnProperty(ddIndex)) {
-            const $_Dd = $($_DdList[ddIndex]);
+            const $_Dd = $($_DdList[ ddIndex ]);
             const id = $_Dd
               .find('.movie-item a')
               .data('val')

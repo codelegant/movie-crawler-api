@@ -21,11 +21,11 @@ const gewara = (() => ({
       uri,
       jar: j,
       headers,
-      qs: {pageNo}
+      qs: { pageNo }
     })
       .then(htmlString => htmlString)
       .catch(e => cliLog.error(e));
-    return (async() => {
+    return (async () => {
       let movieList = [];
       let pageNo = 0;
       let $ = cheerio.load(await getOnePageList());
@@ -35,7 +35,7 @@ const gewara = (() => ({
         for (const movieIndex in $_MovieList) {
           if (movieIndex < $_MovieList.length
             && $_MovieList.hasOwnProperty(movieIndex)) {
-            const $_Movie = $($_MovieList[movieIndex]);
+            const $_Movie = $($_MovieList[ movieIndex ]);
             if ($_Movie.find('a.redBt').attr('href')) {
               const gewaraLink = 'http://www.gewara.com'
                 + $_Movie

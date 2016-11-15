@@ -8,7 +8,7 @@ const server = restify.createServer();
 server.use(restify.queryParser());//使用 req.params，可以获取查询对象
 
 server.get('/cities',
-  async(req, res, next) => {
+  async (req, res, next) => {
     try {
       const movieDb = new MovieDb();
       const docs = await movieDb.findMany('cities');
@@ -21,7 +21,7 @@ server.get('/cities',
       return next(new restify.InternalServerError('获取城市列表失败'));
     }
   },
-  async(req, res, next) => {
+  async (req, res, next) => {
     try {
       const citiesArr = await cawler.cities();
       const movieDb = new MovieDb();
@@ -35,7 +35,7 @@ server.get('/cities',
     }
   });
 
-server.put('/cities', async(req, res, next) => {
+server.put('/cities', async (req, res, next) => {
   try {
     const movieDb = new MovieDb();
     await movieDb.deleteMany('cities', {});
@@ -50,20 +50,20 @@ server.put('/cities', async(req, res, next) => {
   }
 });
 
-server.get('/movies', async(req, res, next) => {
+server.get('/movies', async (req, res, next) => {
     try {
-      const {cityId} = req.params;
-      if (!cityId) return next(new restify.InvalidArgumentError('只接受 cityId 作为参数'));
+      const { cityId } = req.params;
+      if (! cityId) return next(new restify.InvalidArgumentError('只接受 cityId 作为参数'));
 
       const movieDb = new MovieDb();
 
       const moviesExists = await movieDb.collectionExists('movies', false);
-      if (!moviesExists) {
+      if (! moviesExists) {
         await movieDb.client.then(db => db.createCollection('movies'));
         return next();
       }
 
-      const docs = await movieDb.findMany('movies', true, {cityId});
+      const docs = await movieDb.findMany('movies', true, { cityId });
       if (docs.length) return res.json(200, docs);//有数据则是直接返回
       return next();//从各网站抓取
 
@@ -72,10 +72,10 @@ server.get('/movies', async(req, res, next) => {
       return next(new restify.InternalServerError('获取热门电影失败'));
     }
   },
-  async(req, res, next) => {
+  async (req, res, next) => {
     try {
-      const {cityId} = req.params;
-      if (!cityId) return next(new restify.InvalidArgumentError('只接受 cityId 作为参数'));
+      const { cityId } = req.params;
+      if (! cityId) return next(new restify.InvalidArgumentError('只接受 cityId 作为参数'));
 
       let movies = await cawler.movies(cityId);
       movies = movies.map(ele => {
@@ -87,21 +87,21 @@ server.get('/movies', async(req, res, next) => {
       const movieDb = new MovieDb();
 
       //region 索引是否存在
-      const lastUpdatedExists = movieDb.indexExists('movies', ['lastUpdated_1'], false);
+      const lastUpdatedExists = movieDb.indexExists('movies', [ 'lastUpdated_1' ], false);
       //endregion
 
       //region 存入数据库，插入索引
       const result = await movieDb.insert('movies', movies);
 
-      !lastUpdatedExists
+      ! lastUpdatedExists
       && await movieDb
         .client
         .then(
           db => db
             .collection('movies')
             .createIndex(
-              {lastUpdated: 1},
-              {expireAfterSeconds: 3600}
+              { lastUpdated: 1 },
+              { expireAfterSeconds: 3600 }
             )
             .then(() => db.close())
         );
@@ -116,10 +116,10 @@ server.get('/movies', async(req, res, next) => {
     }
   });
 
-server.put('/movies', async(req, res, next) => {
+server.put('/movies', async (req, res, next) => {
   try {
-    const {cityId} = req.params;
-    if (!cityId) return next(new restify.InvalidArgumentError('只接受 cityId 作为参数'));
+    const { cityId } = req.params;
+    if (! cityId) return next(new restify.InvalidArgumentError('只接受 cityId 作为参数'));
 
     let movies = await cawler.movies(cityId);
     movies = movies.map(ele => {
@@ -129,24 +129,24 @@ server.put('/movies', async(req, res, next) => {
     });
 
     const movieDb = new MovieDb();
-    await movieDb.deleteMany('movies', false, {cityId});
+    await movieDb.deleteMany('movies', false, { cityId });
 
     //region 索引是否存在
-    const lastUpdatedExists = movieDb.indexExists('movies', ['lastUpdated_1']);
+    const lastUpdatedExists = movieDb.indexExists('movies', [ 'lastUpdated_1' ]);
     //endregion
 
     //region 存入数据库，插入索引
     const result = await movieDb.insert('movies', movies);
 
-    !lastUpdatedExists
+    ! lastUpdatedExists
     && await movieDb
       .client
       .then(
         db => db
           .collection('movies')
           .createIndex(
-            {lastUpdated: 1},
-            {expireAfterSeconds: 3600}
+            { lastUpdated: 1 },
+            { expireAfterSeconds: 3600 }
           )
           .then(() => db.close())
       );
@@ -160,22 +160,18 @@ server.put('/movies', async(req, res, next) => {
   }
 });
 
-server.get('/movies/:id', async(req, res, next) => {
+server.get('/movies/:id', async (req, res, next) => {
 });
 
 server.listen(8080, () => {
   console.log('%s listening at %s', server.name, server.url);
 });
 
-(async() => {
+(async () => {
   // const lastUpdatedExists = await MongoClient
   //   .connect(url)
   //   .then(db=>docOperate.indexExists(db,'movies',['lastUpdated_1'],()=>db.close()));
-  // console.log(lastUpdatedExists);
-  // MongoClient
-  //   .connect(url)
-  //   .then(async db=> {
-  //     var msg = await dbController.collectionExists(db, 'movies', ()=>db.close());
-  //     cliLog.warn(msg);
-  //   })
+  // console.log(lastUpdatedExists); MongoClient .connect(url) .then(async db=>
+  // { var msg = await dbController.collectionExists(db, 'movies',
+  // ()=>db.close()); cliLog.warn(msg); })
 })();

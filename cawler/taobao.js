@@ -27,7 +27,7 @@ const taobao = (() => ({
     })
       .then(res =>
         //字段名：[{id,parentId,regionName,cityCode,pinYin}]
-        JSON.parse(res.replace(/jsonp\d{2,3}\((.+)\);$/, '$1'))['returnValue']);
+        JSON.parse(res.replace(/jsonp\d{2,3}\((.+)\);$/, '$1'))[ 'returnValue' ]);
   },
   /**
    * @param city {number}
@@ -46,19 +46,19 @@ const taobao = (() => ({
     })
       .then($ => {
         const movieList = [];
-        const $_MovieList = $($('.tab-movie-list')[0]).find('.movie-card-wrap');
+        const $_MovieList = $($('.tab-movie-list')[ 0 ]).find('.movie-card-wrap');
         //.movie-card-wrap>movie-card-tag>.t-201
         for (const movieIndex in $_MovieList) {
           if (movieIndex < $_MovieList.length
             && $_MovieList.hasOwnProperty(movieIndex)) {
-            const $_Movie = $($_MovieList[movieIndex]);
+            const $_Movie = $($_MovieList[ movieIndex ]);
 
             const infoList = [];
             const $_InfoList = $_Movie.find('.movie-card-list').find('span');
             for (const infoIndex in $_InfoList) {
               if (infoIndex < $_InfoList.length
                 && $_InfoList.hasOwnProperty(infoIndex)) {
-                infoList.push($($_InfoList[infoIndex]).text());
+                infoList.push($($_InfoList[ infoIndex ]).text());
               }
             }
 
@@ -82,10 +82,11 @@ const taobao = (() => ({
               .slice(2);
 
             movieList.push({
-              link: {taobaoLink}, //影片首页，同时也是购票链接
+              link: { taobaoLink }, //影片首页，同时也是购票链接
               img, //缩略图
               name, //名称,
-              format: format ? ~~format : null,//201(3D-IMAX) 202(3D) 203(IMAX)
+              format: format ? ~ ~ format : null,//201(3D-IMAX) 202(3D)
+                                                 // 203(IMAX)
               infoList, //介绍信息，导演，主演等
             });
           }

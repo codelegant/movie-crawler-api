@@ -22,10 +22,10 @@ module.exports = (() => ({
    */
   async cities (type = 'arr'){
     const cityLists = await Promise.all([
-        taobao.getCityList(), maoyan.getCityList()
-      ])
-      .then(cityLists => cityLists)
-      .catch(e => cliLog.error(e));
+                                     taobao.getCityList(), maoyan.getCityList()
+                                   ])
+                                   .then(cityLists => cityLists)
+                                   .catch(e => cliLog.error(e));
     const _arrUnion = (taobao, maoyan) => _unionWith(taobao, maoyan, (src, target) => {
       if (target.id) {
         _unset(target, 'id');
@@ -40,7 +40,7 @@ module.exports = (() => ({
         };
       }
     });
-    let citiesObj = _mergeWith(cityLists[0], cityLists[1],
+    let citiesObj = _mergeWith(cityLists[ 0 ], cityLists[ 1 ],
       (target, src) => {
         if (_isArray(target) && _isArray(src)) {
           return _arrUnion(target, src);
@@ -70,7 +70,7 @@ module.exports = (() => ({
     //endregion
 
     //region 抓取热门电影
-    const {taobaoCityCode, maoyanCityCode, gewaraCityCode}=city.cityCode;
+    const { taobaoCityCode, maoyanCityCode, gewaraCityCode }=city.cityCode;
     const movieLists = await Promise
       .all([
         taobao.getHotMovieList(taobaoCityCode),
@@ -79,7 +79,7 @@ module.exports = (() => ({
       ])
       .then(movieLists => movieLists)
       .catch(e => cliLog.error(e));
-    let movies = _unionWith(movieLists[0], movieLists[1], movieLists[2],
+    let movies = _unionWith(movieLists[ 0 ], movieLists[ 1 ], movieLists[ 2 ],
       (src, target) => {
         if (src.name == target.name) return target.link = _merge(src.link, target.link);
       });

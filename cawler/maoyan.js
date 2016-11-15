@@ -16,7 +16,8 @@ const maoyan = (() => ({
     let sitepage = undefined;
     let phInstance = undefined;
 
-    return phantom.create()
+    return phantom
+      .create()
       .then(instance => {
         phInstance = instance;
         return instance.createPage();
@@ -34,13 +35,13 @@ const maoyan = (() => ({
         const $_CityList = $('.city-list').find('ul li');
         const cityList = {};
         for (const listIndex in $_CityList) {
-          if (listIndex < $_CityList.length) {
+          if (listIndex < $_CityList.length && $_CityList.hasOwnProperty(listIndex)) {
             const $_List = $($_CityList[listIndex]);
             const key = $_List.find('span').text();
             cityList[key] = [];
             const $_AList = $_List.find('a');
             for (const aIndex in $_AList) {
-              if (aIndex < $_AList.length) {
+              if (aIndex < $_AList.length && $_AList.hasOwnProperty(aIndex)) {
                 const $_A = $($_AList[aIndex]);
                 cityList[key].push({
                   regionName: $_A.text(),
@@ -64,14 +65,14 @@ const maoyan = (() => ({
     const uri = 'http://maoyan.com/films';
     const cookie = rq.cookie(`ci=${cityCode}`);//设置城市 cookie ，深圳
     j.setCookie(cookie, uri);
-    const getOnePageList = (offset = 0)=> rq({
+    const getOnePageList = (offset = 0) => rq({
       uri,
       jar: j,
       headers,
       qs: {showType: 1, offset}
     })
-      .then(htmlString=> htmlString);
-    return (async()=> {
+      .then(htmlString => htmlString);
+    return (async() => {
       let movieList = [];
       let offset = 0;
       let $ = cheerio.load(await getOnePageList());

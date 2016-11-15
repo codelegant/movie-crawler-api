@@ -4,7 +4,7 @@ const MongoClient = require('mongodb').MongoClient;
 const cliLog = require('../util/cliLog');
 
 class MovieDb {
-  constructor(url = 'mongodb://api:api@127.0.0.1:3000/movie?authMechanism=SCRAM-SHA-1') {
+  constructor(url = 'mongodb://api:api@127.0.0.1:1000/movie?authMechanism=SCRAM-SHA-1') {
     this.url = url;
     this.connect = MongoClient.connect(this.url);
   }
@@ -21,15 +21,15 @@ class MovieDb {
    * @param callback {Function}
    * @return {Promise.<Object>}
    */
-  insert(collection, docs, close = true, callback = ()=> {
+  insert(collection, docs, close = true, callback = () => {
   }) {
     return this
       .connect
       .then(
-        db=> db
+        db => db
           .collection(collection)
           .insertMany(docs)
-          .then(res=> {
+          .then(res => {
             if (res.result.ok !== 1)  throw MongoError('未正确执行插入命令');
             cliLog.success(`${collection}: 插入 ${res.ops.length} 条数据`);
             callback(res);
@@ -47,16 +47,16 @@ class MovieDb {
    * @param collection {String}
    * @return {Promise.<Array>}
    */
-  findMany(collection, close = true, query = {}, callback = ()=> {
+  findMany(collection, close = true, query = {}, callback = () => {
   }) {
     return this
       .connect
       .then(
-        db=>db
+        db => db
           .collection(collection)
           .find(query)
           .toArray()
-          .then(docs=> {
+          .then(docs => {
             cliLog.success(`${collection}: 获取 ${docs.length} 条数据`);
             callback(docs);
             close && db.close();
@@ -73,16 +73,16 @@ class MovieDb {
    * @param callback {Function}
    * @return {*|Promise.<Array>}
    */
-  findById(collection, id, close = true, callback = ()=> {
+  findById(collection, id, close = true, callback = () => {
   }) {
     const _id = new ObjectID(id);
     return this
       .connect
       .then(
-        db=>db
+        db => db
           .collection(collection)
           .findOne({_id})
-          .then(docs=> {
+          .then(docs => {
             cliLog.success(`${collection}: 获取 _id:${id} 的数据`);
             callback(docs);
             close && db.close();
@@ -99,22 +99,23 @@ class MovieDb {
    * @param callback {Function}
    * @return {Promise.<Object>}
    */
-  deleteMany(collection, close = true, query, callback = ()=> {
+  deleteMany(collection, close = true, query, callback = () => {
   }) {
     return this
       .connect
       .then(
-        db=>db
+        db => db
           .collection(collection)
           .deleteMany(query)
-          .then(res=> {
+          .then(res => {
             if (res.result.ok !== 1) throw MongoError('未正确执行删除命令');
             cliLog.success(`${collection}: 删除 ${res.deletedCount} 条数据`);
             callback(res);
             close && db.close();
             return res;
           })
-      );
+      )
+      .catch(e => cliLog.error(e));
   }
 
   /**
@@ -125,20 +126,21 @@ class MovieDb {
    * @param callback {Function}
    * @return {Promise.<Boolean>}
    */
-  indexExists(collection, indexes, close = true, callback = ()=> {
+  indexExists(collection, indexes, close = true, callback = () => {
   }) {
     return this
       .connect
       .then(
-        db=>db
+        db => db
           .collection(collection)
           .indexExists(indexes)
-          .then(res=> {
+          .then(res => {
             callback(res);
             close && db.close();
             return res;
           })
-      );
+      )
+      .catch(e => cliLog.error(e));
   }
 
   /**
@@ -148,13 +150,14 @@ class MovieDb {
    * @return {Promise.<Boolean>}
    */
   async collectionExists(collection, close = true) {
+    //FIXME 返回的不是布尔值，而是集合数组
     return this
       .connect
       .then(
-        db=>db
+        db => db
           .listCollections()
           .toArray()
-          .then(collections=> {
+          .then(collections => {
             let exists = false;
             for (const ele of collections) {
               if (ele.name === collection) {
@@ -165,7 +168,8 @@ class MovieDb {
             close && db.close();
             return collections
           })
-      );
+      )
+      .catch(e => cliLog.log(e));
   }
 }
 

@@ -1,7 +1,7 @@
 const ObjectID = require('mongodb').ObjectID;
 const MongoClient = require('mongodb').MongoClient;
 
-const cliLog = require('../util/cliLog');
+const cliLog = require('../libs/cliLog');
 
 class MovieDb {
   constructor(url = 'mongodb://api:api@127.0.0.1:1000/movie?authMechanism=SCRAM-SHA-1') {

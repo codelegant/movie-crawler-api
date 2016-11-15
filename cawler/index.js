@@ -12,7 +12,7 @@ const taobao = require('./taobao');
 const maoyan = require('./maoyan');
 const gewara = require('./gewara');
 const MovieDb = require('../db/MovieDb');
-const cliLog = require('../util/cliLog');
+const cliLog = require('../libs/cliLog');
 
 module.exports = (() => ({
   /**

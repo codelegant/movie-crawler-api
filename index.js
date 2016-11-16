@@ -160,6 +160,20 @@ server.put('/movies', async (req, res, next) => {
 });
 
 server.get('/movies/:id', async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    if (! id) return next(new restify.NotFoundError('未查询到电影信息'));
+
+    const movieDb = new MovieDb();
+    const doc = await movieDb.findById('movies', id);
+
+    if (doc) return res.json(200, doc);
+    return next(new restify.NotFoundError('未查询到电影信息'));
+  } catch (e) {
+    cliLog.error(e);
+    return next(new restify.InternalServerError('获取电影信息失败'));
+  }
+
 });
 
 server.listen(8080, () => {

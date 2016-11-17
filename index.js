@@ -48,7 +48,9 @@ server.get(
   async(req, res, next) => {
     try {
       const { regionName } = req.query;
-      if (! regionName) return next(new restify.InvalidArgumentError('只接受 regionName 作为参数'));
+      if (! regionName) {
+        return next(new restify.InvalidArgumentError('只接受 regionName 作为参数'));
+      }
       const movieDb = new MovieDb();
       const docs = await movieDb.findMany('cities', true, { regionName });
       return docs.length
@@ -83,7 +85,9 @@ server.get(
   async(req, res, next) => {
     try {
       const { cityId } = req.query;
-      if (! cityId) return next(new restify.InvalidArgumentError('只接受 cityId 作为参数'));
+      if (! cityId) {
+        return next(new restify.InvalidArgumentError('只接受 cityId 作为参数'));
+      }
 
       const movieDb = new MovieDb();
 
@@ -105,7 +109,9 @@ server.get(
   async(req, res, next) => {
     try {
       const { cityId } = req.query;
-      if (! cityId) return next(new restify.InvalidArgumentError('只接受 cityId 作为参数'));
+      if (! cityId) {
+        return next(new restify.InvalidArgumentError('只接受 cityId 作为参数'));
+      }
 
       let movies = await cawler.movies(cityId);
       movies = movies.map(ele => {
@@ -117,7 +123,8 @@ server.get(
       const movieDb = new MovieDb();
 
       //region 索引是否存在
-      const lastUpdatedExists = await movieDb.indexExists('movies', [ 'lastUpdated_1' ], false);
+      const lastUpdatedExists
+        = await movieDb.indexExists('movies', [ 'lastUpdated_1' ], false);
       //endregion
       //region 存入数据库，插入索引
       const result = await movieDb.insert('movies', movies, lastUpdatedExists);
@@ -149,7 +156,9 @@ server.get(
 server.put('/movies', async(req, res, next) => {
   try {
     const { cityId } = req.query;
-    if (! cityId) return next(new restify.InvalidArgumentError('只接受 cityId 作为参数'));
+    if (! cityId) {
+      return next(new restify.InvalidArgumentError('只接受 cityId 作为参数'));
+    }
 
     let movies = await cawler.movies(cityId);
     movies = movies.map(ele => {
@@ -162,7 +171,8 @@ server.put('/movies', async(req, res, next) => {
     await movieDb.deleteMany('movies', false, { cityId });
 
     //region 索引是否存在
-    const lastUpdatedExists = await movieDb.indexExists('movies', [ 'lastUpdated_1' ], false);
+    const lastUpdatedExists
+      = await movieDb.indexExists('movies', [ 'lastUpdated_1' ], false);
     //endregion
 
     //region 存入数据库，插入索引

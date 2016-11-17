@@ -22,32 +22,43 @@ module.exports = (() => ({
    */
   async cities (type = 'arr'){
     const cityLists = await Promise.all([
-                                     taobao.getCityList(), maoyan.getCityList()
+                                     taobao.getCityList(),
+                                     maoyan.getCityList(),
                                    ])
                                    .then(cityLists => cityLists)
                                    .catch(e => cliLog.error(e));
-    const _arrUnion = (taobao, maoyan) => _unionWith(taobao, maoyan, (src, target) => {
-      if (target.id) {
-        _unset(target, 'id');
-        _unset(target, 'parentId');
-        _unset(target, 'pinYin');
-      }
-      if (src.regionName === target.regionName) {
-        return target.cityCode = {
-          taobaoCityCode: target.cityCode,
-          maoyanCityCode: src.cityCode,
-          gewaraCityCode: target.cityCode
-        };
-      }
-    });
-    let citiesObj = _mergeWith(cityLists[ 0 ], cityLists[ 1 ],
+    const _arrUnion = (taobao, maoyan) =>
+      _unionWith(
+        taobao,
+        maoyan,
+        (src, target) => {
+          if (target.id) {
+            _unset(target, 'id');
+            _unset(target, 'parentId');
+            _unset(target, 'pinYin');
+          }
+          if (src.regionName === target.regionName) {
+            return target.cityCode = {
+              taobaoCityCode: target.cityCode,
+              maoyanCityCode: src.cityCode,
+              gewaraCityCode: target.cityCode
+            };
+          }
+        }
+      );
+    let citiesObj = _mergeWith(
+      cityLists[ 0 ],
+      cityLists[ 1 ],
       (target, src) => {
         if (_isArray(target) && _isArray(src)) {
           return _arrUnion(target, src);
         }
       }
     );
-    citiesObj = _mapValues(citiesObj, arr => _remove(arr, city => _isObject(city.cityCode)));
+    citiesObj = _mapValues(
+      citiesObj,
+      arr => _remove(arr, city => _isObject(city.cityCode))
+    );
     if (type === 'obj') return citiesObj;
     const citiesArr = [];
     _mapKeys(citiesObj, (cities, key) => {
@@ -81,7 +92,9 @@ module.exports = (() => ({
       .catch(e => cliLog.error(e));
     let movies = _unionWith(movieLists[ 0 ], movieLists[ 1 ], movieLists[ 2 ],
       (src, target) => {
-        if (src.name == target.name) return target.link = _merge(src.link, target.link);
+        if (src.name == target.name) {
+          return target.link = _merge(src.link, target.link);
+        }
       });
     return _remove(movies, movie => movie.link.taobaoLink);
     //endregion

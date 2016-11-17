@@ -36,7 +36,9 @@ const maoyan = (() => ({
         const $_CityList = $('.city-list').find('ul li');
         const cityList = {};
         for (const listIndex in $_CityList) {
-          if (listIndex < $_CityList.length && $_CityList.hasOwnProperty(listIndex)) {
+          if (listIndex < $_CityList.length
+            && $_CityList.hasOwnProperty(listIndex)) {
+
             const $_List = $($_CityList[ listIndex ]);
             const key = $_List.find('span').text();
             cityList[ key ] = [];
@@ -76,7 +78,7 @@ const maoyan = (() => ({
       })
         .then(htmlString => htmlString)
         .catch(e => cliLog.error(e));
-    return (async () => {
+    return (async() => {
       let movieList = [];
       let offset = 0;
       let $ = cheerio.load(await getOnePageList());

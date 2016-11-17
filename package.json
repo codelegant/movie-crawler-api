@@ -1,6 +1,6 @@
 {
   "name": "moive-cawler-api",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "淘宝，猫眼，格瓦拉影票信息抓取接口",
   "main": "index.js",
   "scripts": {

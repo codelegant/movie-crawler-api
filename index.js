@@ -8,7 +8,7 @@ const server = restify.createServer();
 server.use(restify.queryParser());//使用 req.params，可以获取查询对象
 
 server.get('/cities',
-  async (req, res, next) => {
+  async(req, res, next) => {
     try {
       const movieDb = new MovieDb();
       const docs = await movieDb.findMany('cities');
@@ -21,7 +21,7 @@ server.get('/cities',
       return next(new restify.InternalServerError('获取城市列表失败'));
     }
   },
-  async (req, res, next) => {
+  async(req, res, next) => {
     try {
       const citiesArr = await cawler.cities();
       const movieDb = new MovieDb();
@@ -35,10 +35,12 @@ server.get('/cities',
     }
   });
 
-server.put('/cities', async (req, res, next) => {
+server.put('/cities', async(req, res, next) => {
   try {
     const movieDb = new MovieDb();
-    await movieDb.deleteMany('cities', {});
+    await movieDb.deleteMany('cities', false);
+
+    const citiesArr = await cawler.cities();
 
     const cities = await cawler.cities();
     const result = await movieDb.insert('cities', citiesArr);
@@ -50,7 +52,7 @@ server.put('/cities', async (req, res, next) => {
   }
 });
 
-server.get('/movies', async (req, res, next) => {
+server.get('/movies', async(req, res, next) => {
     try {
       const { cityId } = req.params;
       if (! cityId) return next(new restify.InvalidArgumentError('只接受 cityId 作为参数'));
@@ -72,7 +74,7 @@ server.get('/movies', async (req, res, next) => {
       return next(new restify.InternalServerError('获取热门电影失败'));
     }
   },
-  async (req, res, next) => {
+  async(req, res, next) => {
     try {
       const { cityId } = req.params;
       if (! cityId) return next(new restify.InvalidArgumentError('只接受 cityId 作为参数'));
@@ -115,7 +117,7 @@ server.get('/movies', async (req, res, next) => {
     }
   });
 
-server.put('/movies', async (req, res, next) => {
+server.put('/movies', async(req, res, next) => {
   try {
     const { cityId } = req.params;
     if (! cityId) return next(new restify.InvalidArgumentError('只接受 cityId 作为参数'));
@@ -159,7 +161,7 @@ server.put('/movies', async (req, res, next) => {
   }
 });
 
-server.get('/movies/:id', async (req, res, next) => {
+server.get('/movies/:id', async(req, res, next) => {
   try {
     const { id } = req.params;
     if (! id) return next(new restify.NotFoundError('未查询到电影信息'));
@@ -180,7 +182,7 @@ server.listen(8080, () => {
   console.log('%s listening at %s', server.name, server.url);
 });
 
-(async () => {
+(async() => {
   // const lastUpdatedExists = await MongoClient
   //   .connect(url)
   //   .then(db=>docOperate.indexExists(db,'movies',['lastUpdated_1'],()=>db.close()));

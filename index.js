@@ -5,11 +5,15 @@ const cliLog = require('./libs/cliLog');
 const MovieDb = require('./db/MovieDb');
 
 const server = restify.createServer();
-server.use(restify.queryParser());//使用 req.params，可以获取查询对象
+server.use(restify.queryParser());//使用 req.query，可以获取查询对象
 
-server.get('/cities',
+server.get(
+  '/cities',
   async(req, res, next) => {
     try {
+      console.log(req);
+      const { regionName } = req.query;
+      if (regionName) return next('regionName');
       const movieDb = new MovieDb();
       const docs = await movieDb.findMany('cities');
 
@@ -33,7 +37,29 @@ server.get('/cities',
       cliLog.error(e);
       return next(new restify.InternalServerError('获取城市列表失败'));
     }
-  });
+  }
+);
+
+server.get(
+  {
+    name: 'regionName',
+    path: '/cities'
+  },
+  async(req, res, next) => {
+    try {
+      const { regionName } = req.query;
+      if (! regionName) return next(new restify.InvalidArgumentError('只接受 regionName 作为参数'));
+      const movieDb = new MovieDb();
+      const docs = await movieDb.findMany('cities', true, { regionName });
+      return docs.length
+        ? res.json(200, docs)
+        : next(new restify.NotFoundError(`查询 regionName:${regionName} 失败`));
+    } catch (e) {
+      cliLog.error(e);
+      return next(new restify.InternalServerError('获取城市信息失败'));
+    }
+  }
+);
 
 server.put('/cities', async(req, res, next) => {
   try {
@@ -52,9 +78,11 @@ server.put('/cities', async(req, res, next) => {
   }
 });
 
-server.get('/movies', async(req, res, next) => {
+server.get(
+  '/movies',
+  async(req, res, next) => {
     try {
-      const { cityId } = req.params;
+      const { cityId } = req.query;
       if (! cityId) return next(new restify.InvalidArgumentError('只接受 cityId 作为参数'));
 
       const movieDb = new MovieDb();
@@ -76,7 +104,7 @@ server.get('/movies', async(req, res, next) => {
   },
   async(req, res, next) => {
     try {
-      const { cityId } = req.params;
+      const { cityId } = req.query;
       if (! cityId) return next(new restify.InvalidArgumentError('只接受 cityId 作为参数'));
 
       let movies = await cawler.movies(cityId);
@@ -115,11 +143,12 @@ server.get('/movies', async(req, res, next) => {
       cliLog.error(e);
       return next(new restify.InternalServerError('获取热门电影失败'));
     }
-  });
+  }
+);
 
 server.put('/movies', async(req, res, next) => {
   try {
-    const { cityId } = req.params;
+    const { cityId } = req.query;
     if (! cityId) return next(new restify.InvalidArgumentError('只接受 cityId 作为参数'));
 
     let movies = await cawler.movies(cityId);
@@ -163,7 +192,7 @@ server.put('/movies', async(req, res, next) => {
 
 server.get('/movies/:id', async(req, res, next) => {
   try {
-    const { id } = req.params;
+    const { id } = req.query;
     if (! id) return next(new restify.NotFoundError('未查询到电影信息'));
 
     const movieDb = new MovieDb();
@@ -175,7 +204,6 @@ server.get('/movies/:id', async(req, res, next) => {
     cliLog.error(e);
     return next(new restify.InternalServerError('获取电影信息失败'));
   }
-
 });
 
 server.listen(8080, () => {

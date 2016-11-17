@@ -5,17 +5,14 @@
   "main": "index.js",
   "scripts": {
     "start": "node --harmony-async-await index.js",
-    "dev": "node-dev --harmony-async-await index.js"
+    "dev": "set DEBUG=debug & node-dev --harmony-async-await index.js"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/codelegant/moive-cawler-api.git"
   },
   "keywords": [
-    "request",
-    "request-promise",
-    "cheerio",
-    "phantom"
+    "request","request-promise","cheerio","phantom"
   ],
   "author": "codelegant laichuanfeng@hotmail.com",
   "license": "MIT",
@@ -40,5 +37,8 @@
     "request": "^2.75.0",
     "request-promise": "^4.1.1",
     "restify": "^4.2.0"
+  },
+  "devDependencies": {
+    "debug": "^2.3.2"
   }
 }

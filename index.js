@@ -1,4 +1,5 @@
 const restify = require('restify');
+const debug = require('debug')('debug');
 
 const cawler = require('./cawler/index');
 const cliLog = require('./libs/cliLog');
@@ -11,7 +12,6 @@ server.get(
   '/cities',
   async(req, res, next) => {
     try {
-      console.log(req);
       const { regionName } = req.query;
       if (regionName) return next('regionName');
       const movieDb = new MovieDb();

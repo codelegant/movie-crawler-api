@@ -19,7 +19,9 @@ server.get(
     name: 'regionName',
     path: '/cities',
   },
-  city.getByRegionName
+  //TODO 数据库为空时的情况
+  city.getByRegionNameFromDb,
+  city.getByRegionNameFromCawler
 );
 
 server.put('/cities', city.put);

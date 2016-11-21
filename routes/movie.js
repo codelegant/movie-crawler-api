@@ -22,8 +22,8 @@ module.exports = (() => ({
       }
 
       const docs = await movieDb.findMany('movies', true, { cityId });
-      if (docs.length) return res.json(200, docs);//有数据则是直接返回
-      return next();//从各网站抓取
+
+      return docs.length ? res.json(200, docs) : next();
 
     } catch (e) {
       cliLog.error(e);

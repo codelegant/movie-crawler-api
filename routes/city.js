@@ -61,7 +61,7 @@ module.exports = (() => ({
   },
 
   /**
-   * 数据为空，重新抓取，存储，查找
+   * 数据为空，重新抓取，存储，查找 regionName
    */
   async getByRegionNameFromCawler(req, res, next){
     try {
@@ -73,7 +73,7 @@ module.exports = (() => ({
       const citiesArr = await cawler.cities();
       const movieDb = new MovieDb();
       const result = await movieDb.insert('cities', citiesArr, false);
-      let docs = [];
+      let docs = null;
       for (const ele of result.ops) {
         if (ele.regionName === regionName) {
           docs = ele;
@@ -81,8 +81,8 @@ module.exports = (() => ({
         }
       }
 
-      return docs.length
-        ? res.json(200, docs[ 0 ])
+      return docs
+        ? res.json(200, docs)
         : next(new restify.NotFoundError(`查询 regionName:${regionName} 失败`));
 
     } catch (e) {

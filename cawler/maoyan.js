@@ -94,10 +94,13 @@ const maoyan = (() => ({
               .data('val')
               .replace(/{[a-z]+:(\d+)}/gi, '$1');
             movieList.push({
-              link: {
+              links: {
                 maoyanLink: `http://www.meituan.com/dianying/${id}?#content`
               }, //影片首页，同时也是购票链接
               name: $_Dd.find('.movie-item-title').attr('title'), //名称,
+              ids: {
+                maoyanId: id,
+              }
             });
           }
         }
@@ -106,6 +109,6 @@ const maoyan = (() => ({
       } while ($_MovieList.length);
       return movieList;
     })();
-  }
+  },
 }))();
 module.exports = maoyan;

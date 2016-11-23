@@ -33,7 +33,7 @@ const taobao = (() => ({
    * @param city {number}
    * @return {Promise.<Array>}
    */
-  getHotMovieList(city = 440300) {
+  getHotMovieList(city) {
     return rq({
       uri: 'http://dianying.taobao.com/showList.htm',
       method: 'GET',
@@ -75,26 +75,33 @@ const taobao = (() => ({
               .find('.movie-card-name')
               .children('.bt-l').text();
 
+            //201(3D-IMAX) 202(3D) 203(IMAX)
             const format = $_Movie
               .find('.movie-card-tag')
               .find('i')
               .attr('class')
               .slice(2);
 
+            const taobaoId = taobaoLink.replace(/.*showId=([0-9]*).*/, '$1');
+
             movieList.push({
-              link: { taobaoLink }, //影片首页，同时也是购票链接
+              links: { taobaoLink }, //影片首页，同时也是购票链接
               img, //缩略图
               name, //名称,
-              format: format ? ~ ~ format : null,//201(3D-IMAX) 202(3D)
-                                                 // 203(IMAX)
+              format: format ? ~ ~ format : null,
               infoList, //介绍信息，导演，主演等
+              ids: { taobaoId }
             });
           }
         }
         return movieList;
       })
       .catch(e => cliLog.error(e));
-  }
+  },
+
+  getSchedules(){
+
+  },
 }))();
 
 module.exports = taobao;

@@ -44,10 +44,13 @@ const gewara = (() => ({
 
               const name = $_Movie.find('.ui_movieType').attr('title');
               movieList.push({
-                link: {
-                  gewaraLink: gewaraLink
+                links: {
+                  gewaraLink
                 }, //影片首页，同时也是购票链接
-                name: name, //名称,
+                name, //名称,
+                ids: {
+                  gewaraId: gewaraLink.replace(/.*\/movie\/([0-9]*)/, '$1'),
+                }
               });
             }
           }
@@ -57,6 +60,6 @@ const gewara = (() => ({
       } while ($_MovieList.length);
       return movieList;
     })();
-  }
+  },
 }))();
 module.exports = gewara;

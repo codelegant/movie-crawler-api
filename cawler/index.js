@@ -93,10 +93,11 @@ module.exports = (() => ({
     let movies = _unionWith(movieLists[ 0 ], movieLists[ 1 ], movieLists[ 2 ],
       (src, target) => {
         if (src.name == target.name) {
-          return target.link = _merge(src.link, target.link);
+          target.links = _merge(src.links, target.links);
+          target.ids = _merge(src.ids, target.ids);
         }
       });
-    return _remove(movies, movie => movie.link.taobaoLink);
+    return _remove(movies, movie => movie.links.taobaoLink);
     //endregion
-  }
+  },
 }))();

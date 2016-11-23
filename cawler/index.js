@@ -16,7 +16,7 @@ const cliLog = require('../libs/cliLog');
 
 module.exports = (() => ({
   /**
-   * 返回数据格式或者对象格式的城市列表数据
+   * @desc 返回数据格式或者对象格式的城市列表数据
    * @param type {String<'arr'|'obj'>}
    * @return {Object|Array}
    */
@@ -70,7 +70,7 @@ module.exports = (() => ({
     return citiesArr;
   },
   /**
-   * 使用 cityId 获取热门电影列表
+   * @desc 使用 cityId 获取热门电影列表
    * @param cityId {String}
    * @return {Array}
    */

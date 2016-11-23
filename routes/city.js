@@ -5,9 +5,9 @@ const cawler = require('../cawler/index');
 const cliLog = require('../libs/cliLog');
 const MovieDb = require('../db/MovieDb');
 
-module.exports = (() => ({
+const city = (() => ({
   /**
-   * 直接从数据库获取城市列表
+   * @desc 直接从数据库获取城市列表
    */
   async getFromDb(req, res, next){
     try {
@@ -25,7 +25,7 @@ module.exports = (() => ({
   },
 
   /**
-   * 先爬取城市列表，然后存入数据库
+   * @desc 先爬取城市列表，然后存入数据库
    */
   async getFromCawler(req, res, next){
     try {
@@ -42,7 +42,7 @@ module.exports = (() => ({
   },
 
   /**
-   * 使用 regionName 字段查询城市数据
+   * @desc 使用 regionName 字段查询城市数据
    */
   async getByRegionNameFromDb(req, res, next){
     try {
@@ -61,7 +61,7 @@ module.exports = (() => ({
   },
 
   /**
-   * 数据为空，重新抓取，存储，查找 regionName
+   * @desc 数据为空，重新抓取，存储，查找 regionName
    */
   async getByRegionNameFromCawler(req, res, next){
     try {
@@ -92,7 +92,7 @@ module.exports = (() => ({
   },
 
   /**
-   * 重新爬取城市列表信息，并存入数据库
+   * @desc 重新爬取城市列表信息，并存入数据库
    */
   async put(req, res, next){
     try {
@@ -111,3 +111,5 @@ module.exports = (() => ({
     }
   },
 }))();
+
+module.exports = city;

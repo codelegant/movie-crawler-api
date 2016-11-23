@@ -5,7 +5,10 @@ const cawler = require('../cawler/index');
 const cliLog = require('../libs/cliLog');
 const MovieDb = require('../db/MovieDb');
 
-module.exports = (() => ({
+const movie = (() => ({
+  /**
+   * @desc 使用 cityId 从数据库中读取热门电影列表
+   */
   async getByCityIdFromDb(req, res, next){
     try {
       const { cityId } = req.query;
@@ -30,6 +33,10 @@ module.exports = (() => ({
       return next(new restify.InternalServerError('获取热门电影失败'));
     }
   },
+
+  /**
+   * @desc 使用 cityId 从爬虫中读取热门电影列表
+   */
   async getByCityIdFromCawler(req, res, next) {
     try {
       const { cityId } = req.query;
@@ -75,6 +82,10 @@ module.exports = (() => ({
       return next(new restify.InternalServerError('获取热门电影失败'));
     }
   },
+
+  /**
+   * @desc 使用 id 获取电影详情
+   */
   async getById(req, res, next){
     try {
       const { id } = req.query;
@@ -90,6 +101,10 @@ module.exports = (() => ({
       return next(new restify.InternalServerError('获取电影信息失败'));
     }
   },
+
+  /**
+   * @desc 使用 cityId 重新抓取热门电影并存储
+   */
   async put(req, res, next){
     try {
       const { cityId } = req.query;
@@ -137,3 +152,5 @@ module.exports = (() => ({
     }
   },
 }))();
+
+module.exports = movie;

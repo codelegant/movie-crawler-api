@@ -3,6 +3,9 @@ const MongoClient = require('mongodb').MongoClient;
 
 const cliLog = require('../libs/cliLog');
 
+/**
+ * @class 数据库接口作类
+ */
 class MovieDb {
   constructor (url = 'mongodb://api:api@127.0.0.1:1000/movie?authMechanism=SCRAM-SHA-1') {
     this.url = url;
@@ -14,7 +17,7 @@ class MovieDb {
   }
 
   /**
-   * 插入城市列表数据
+   * @desc 插入城市列表数据
    * @param collection {String}
    * @param docs {Array}
    * @param close {Boolean}
@@ -40,7 +43,7 @@ class MovieDb {
   }
 
   /**
-   * 查询多条数据
+   * @desc 查询多条数据
    * @param callback {Function}
    * @param close {Boolean}
    * @param query {Object}
@@ -66,7 +69,7 @@ class MovieDb {
   }
 
   /**
-   * 使用 id 查询数据
+   * @desc 使用 id 查询数据
    * @param collection {String}
    * @param id {String}
    * @param close {Boolean}
@@ -92,7 +95,7 @@ class MovieDb {
   }
 
   /**
-   * 删除多条数据
+   * @desc 删除多条数据
    * @param collection {String}
    * @param close {Boolean}
    * @param query {Object}
@@ -119,7 +122,7 @@ class MovieDb {
   }
 
   /**
-   * 索引是否存在
+   * @desc 索引是否存在
    * @param collection {String}
    * @param indexes {Array}
    * @param close {Boolean}
@@ -144,7 +147,7 @@ class MovieDb {
   }
 
   /**
-   * 集合是否存在
+   * @desc 集合是否存在
    * @param collection {String}
    * @param close {Boolean}
    * @return {Promise.<Boolean>}

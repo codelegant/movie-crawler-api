@@ -8,5 +8,5 @@ module.exports = {
   error,
   warn,
   info,
-  success
+  success,
 }; 

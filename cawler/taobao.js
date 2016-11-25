@@ -85,13 +85,14 @@ function getHotMovieList(city) {
 
           const taobaoId = taobaoLink.replace(/.*showId=([0-9]*).*/, '$1');
 
+          //TODO: links->link ids->movieId
           movieList.push({
             links: { taobaoLink }, //影片首页，同时也是购票链接
             img, //缩略图
             name, //名称,
             format: format ? ~ ~ format : null,
             infoList, //介绍信息，导演，主演等
-            ids: { taobaoId }
+            ids: { taobaoId }  //电影Id
           });
         }
       }
@@ -99,6 +100,90 @@ function getHotMovieList(city) {
     })
     .catch(e => cliLog.error(e));
 }
+
+function getDetail({ taobaoCityId, cityName, taobaoMovieId, cinemaId, date }) {
+
+  /**
+   * 获取当前城市的区域信息
+   * @param htmlStr {String}
+   * @return {Array}
+   */
+  function getAreas(htmlStr) {
+    const $ = cheerio.load(htmlStr);
+    const list = [];
+    const $_List = $('a');
+    for (const index in $_List) {
+      if (index < $_List.length
+        && $_List.hasOwnProperty(index)
+        && index > 0) {
+        const $_Target = $($_List[ index ]);
+        list.push($_Target.text());
+      }
+    }
+    return list;
+  }
+
+  function getCinemas(htmlStr) {
+    const $ = cheerio.load(htmlStr);
+    const list = [];
+    const $_List = $('a');
+    for (const index in $_List) {
+      if (index < $_List.length
+        && $_List.hasOwnProperty(index)
+        && index > 0) {
+        const $_Target = $($_List[ index ]);
+        list.push({
+          taobaoId: $_Target.data('param').replace(/.*cinemaId=([0-9]*).*/, '$1'),
+          name: $_Target.text(),
+        });
+      }
+    }
+    return list;
+  }
+
+  function getDates(htmlStr) {
+
+  }
+
+  function getSchedules(htmlStr) {
+
+  }
+
+  const j = rq.jar();
+  const uri = `${host}/showDetailSchedule.htm`;
+  const cityNameBase64 = new Buffer(cityName).toString('base64');
+  //设置城市信息 cookie
+  const cookie = rq.cookie(`tb_city=${taobaoCityId};tb_cityName=${cityNameBase64}`);
+  j.setCookie(cookie, uri);
+
+  return rq({
+    uri,
+    jar: j,
+    headers,
+    qs: { showId: taobaoMovieId, ts: Date.now(), n_s: 'new' },
+    transform: body => cheerio.load(body),
+  })
+    .then($ => {
+      const $selectTags = $('.select-tags');
+      const $_Arr = [ $selectTags[ 0 ], $selectTags[ 1 ], $selectTags[ 2 ] ];
+      const [areaStr,cinemasStr,datesStr,schedulesStr]= $_Arr;
+      const [areas,cinemas,dates,schedules]=[
+        getAreas(areaStr),
+        getCinemas(cinemasStr),
+        getDates(datesStr),
+        getSchedules(schedulesStr) ];
+      console.log(areas);
+      console.log(cinemas);
+
+    })
+    .catch(e => cliLog.error(e));
+}
+
+getDetail({
+  taobaoCityId: 440300,
+  cityName: '深圳',
+  taobaoMovieId: 156419
+});
 
 module.exports = {
   getCityList,

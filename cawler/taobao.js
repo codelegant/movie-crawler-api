@@ -83,16 +83,15 @@ function getHotMovieList(city) {
             .attr('class')
             .slice(2);
 
-          const taobaoId = taobaoLink.replace(/.*showId=([0-9]*).*/, '$1');
+          const taobaoMovieId = taobaoLink.replace(/.*showId=([0-9]*).*/, '$1');
 
-          //TODO: links->link ids->movieId
           movieList.push({
-            links: { taobaoLink }, //影片首页，同时也是购票链接
+            link: { taobaoLink }, //影片首页，同时也是购票链接
             img, //缩略图
             name, //名称,
             format: format ? ~ ~ format : null,
             infoList, //介绍信息，导演，主演等
-            ids: { taobaoId }  //电影Id
+            movieId: { taobaoMovieId }  //电影Id
           });
         }
       }
@@ -105,7 +104,7 @@ function getDetail({ taobaoCityId, cityName, taobaoMovieId, cinemaId, date }) {
 
   /**
    * 获取当前城市的区域信息
-   * @param htmlStr {String}
+   * @param htmlStr {Object}
    * @return {Array}
    */
   function getAreas(htmlStr) {
@@ -123,6 +122,11 @@ function getDetail({ taobaoCityId, cityName, taobaoMovieId, cinemaId, date }) {
     return list;
   }
 
+  /**
+   * 获取影院信息
+   * @param htmlStr {Object}
+   * @returns {Array}
+   */
   function getCinemas(htmlStr) {
     const $ = cheerio.load(htmlStr);
     const list = [];
@@ -133,7 +137,8 @@ function getDetail({ taobaoCityId, cityName, taobaoMovieId, cinemaId, date }) {
         && index > 0) {
         const $_Target = $($_List[index]);
         list.push({
-          taobaoId: $_Target.data('param').replace(/.*cinemaId=([0-9]*).*/, '$1'),
+          //cinemaId
+          taobaoCinemaId: $_Target.data('param').replace(/.*cinemaId=([0-9]*).*/, '$1'),
           name: $_Target.text(),
         });
       }
@@ -142,7 +147,17 @@ function getDetail({ taobaoCityId, cityName, taobaoMovieId, cinemaId, date }) {
   }
 
   function getDates(htmlStr) {
-
+    console.log(htmlStr.html());
+    const $ = cheerio.load(htmlStr);
+    const list = [];
+    const $_List = $('a');
+    for (const index in $_List) {
+      if (index < $_List.length
+        && $_List.hasOwnProperty(index)
+        && index > 0) {
+        list.push({});
+      }
+    }
   }
 
   function getSchedules(htmlStr) {
@@ -166,13 +181,12 @@ function getDetail({ taobaoCityId, cityName, taobaoMovieId, cinemaId, date }) {
     .then($ => {
       const $selectTags = $('.select-tags');
       const $_Arr = [$selectTags[0], $selectTags[1], $selectTags[2]];
-      const [areaStr,cinemasStr,datesStr,schedulesStr]= $_Arr;
-      const [areas,cinemas,dates,schedules]=[
-        getAreas(areaStr),
-        getCinemas(cinemasStr),
-        getDates(datesStr),
-        getSchedules(schedulesStr)];
-      console.log(areas);
+      const [areaObj,cinemasObj,datesObj]= $_Arr;
+      const [areas,cinemas,dates]=[
+        getAreas(areaObj),
+        getCinemas(cinemasObj),
+        getDates(datesObj)];
+      // console.log(areas);
       console.log(cinemas);
 
     })

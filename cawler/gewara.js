@@ -43,11 +43,11 @@ function getHotMovieList(cityCode = 440300) {
 
             const name = $_Movie.find('.ui_movieType').attr('title');
             movieList.push({
-              links: {
+              link: {
                 gewaraLink
               }, //影片首页，同时也是购票链接
               name, //名称,
-              ids: {
+              movieId: {
                 gewaraId: gewaraLink.replace(/.*\/movie\/([0-9]*)/, '$1'),
               }
             });

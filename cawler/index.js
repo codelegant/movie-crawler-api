@@ -93,11 +93,11 @@ async function movies(cityId) {
   let movies = _unionWith(movieLists[0], movieLists[1], movieLists[2],
     (src, target) => {
       if (src.name == target.name) {
-        target.links = _merge(src.links, target.links);
-        target.ids = _merge(src.ids, target.ids);
+        target.link = _merge(src.link, target.link);
+        target.movieId = _merge(src.movieId, target.movieId);
       }
     });
-  return _remove(movies, movie => movie.links.taobaoLink);
+  return _remove(movies, movie => movie.link.taobaoLink);
   //endregion
 }
 

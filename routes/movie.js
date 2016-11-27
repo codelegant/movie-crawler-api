@@ -54,7 +54,7 @@ async function getByCityIdFromCawler(req, res, next) {
 
     //region 索引是否存在
     const lastUpdatedExists
-      = await movieDb.indexExists('movies', [ 'lastUpdated_1' ], false);
+      = await movieDb.indexExists('movies', ['lastUpdated_1'], false);
     //endregion
     //region 存入数据库，插入索引
     const result = await movieDb.insert('movies', movies, lastUpdatedExists);
@@ -123,7 +123,7 @@ async function put(req, res, next) {
 
     //region 索引是否存在
     const lastUpdatedExists
-      = await movieDb.indexExists('movies', [ 'lastUpdated_1' ], false);
+      = await movieDb.indexExists('movies', ['lastUpdated_1'], false);
     //endregion
 
     //region 存入数据库，插入索引

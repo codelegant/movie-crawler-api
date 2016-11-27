@@ -27,7 +27,7 @@ function getCityList() {
   })
     .then(res =>
       //字段名：[{id,parentId,regionName,cityCode,pinYin}]
-      JSON.parse(res.replace(/jsonp\d{2,3}\((.+)\);$/, '$1'))[ 'returnValue' ]);
+      JSON.parse(res.replace(/jsonp\d{2,3}\((.+)\);$/, '$1'))['returnValue']);
 }
 
 /**
@@ -47,19 +47,19 @@ function getHotMovieList(city) {
   })
     .then($ => {
       const movieList = [];
-      const $_MovieList = $($('.tab-movie-list')[ 0 ]).find('.movie-card-wrap');
+      const $_MovieList = $($('.tab-movie-list')[0]).find('.movie-card-wrap');
       //.movie-card-wrap>movie-card-tag>.t-201
       for (const movieIndex in $_MovieList) {
         if (movieIndex < $_MovieList.length
           && $_MovieList.hasOwnProperty(movieIndex)) {
-          const $_Movie = $($_MovieList[ movieIndex ]);
+          const $_Movie = $($_MovieList[movieIndex]);
 
           const infoList = [];
           const $_InfoList = $_Movie.find('.movie-card-list').find('span');
           for (const infoIndex in $_InfoList) {
             if (infoIndex < $_InfoList.length
               && $_InfoList.hasOwnProperty(infoIndex)) {
-              infoList.push($($_InfoList[ infoIndex ]).text());
+              infoList.push($($_InfoList[infoIndex]).text());
             }
           }
 
@@ -116,7 +116,7 @@ function getDetail({ taobaoCityId, cityName, taobaoMovieId, cinemaId, date }) {
       if (index < $_List.length
         && $_List.hasOwnProperty(index)
         && index > 0) {
-        const $_Target = $($_List[ index ]);
+        const $_Target = $($_List[index]);
         list.push($_Target.text());
       }
     }
@@ -131,7 +131,7 @@ function getDetail({ taobaoCityId, cityName, taobaoMovieId, cinemaId, date }) {
       if (index < $_List.length
         && $_List.hasOwnProperty(index)
         && index > 0) {
-        const $_Target = $($_List[ index ]);
+        const $_Target = $($_List[index]);
         list.push({
           taobaoId: $_Target.data('param').replace(/.*cinemaId=([0-9]*).*/, '$1'),
           name: $_Target.text(),
@@ -165,13 +165,13 @@ function getDetail({ taobaoCityId, cityName, taobaoMovieId, cinemaId, date }) {
   })
     .then($ => {
       const $selectTags = $('.select-tags');
-      const $_Arr = [ $selectTags[ 0 ], $selectTags[ 1 ], $selectTags[ 2 ] ];
+      const $_Arr = [$selectTags[0], $selectTags[1], $selectTags[2]];
       const [areaStr,cinemasStr,datesStr,schedulesStr]= $_Arr;
       const [areas,cinemas,dates,schedules]=[
         getAreas(areaStr),
         getCinemas(cinemasStr),
         getDates(datesStr),
-        getSchedules(schedulesStr) ];
+        getSchedules(schedulesStr)];
       console.log(areas);
       console.log(cinemas);
 

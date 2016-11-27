@@ -46,8 +46,8 @@ async function cities(type = 'arr') {
       }
     );
   let citiesObj = _mergeWith(
-    cityLists[ 0 ],
-    cityLists[ 1 ],
+    cityLists[0],
+    cityLists[1],
     (target, src) => {
       if (_isArray(target) && _isArray(src)) {
         return _arrUnion(target, src);
@@ -90,7 +90,7 @@ async function movies(cityId) {
     ])
     .then(movieLists => movieLists)
     .catch(e => cliLog.error(e));
-  let movies = _unionWith(movieLists[ 0 ], movieLists[ 1 ], movieLists[ 2 ],
+  let movies = _unionWith(movieLists[0], movieLists[1], movieLists[2],
     (src, target) => {
       if (src.name == target.name) {
         target.links = _merge(src.links, target.links);

@@ -34,7 +34,7 @@ function getHotMovieList(cityCode = 440300) {
         if (movieIndex < $_MovieList.length
           && $_MovieList.hasOwnProperty(movieIndex)) {
 
-          const $_Movie = $($_MovieList[ movieIndex ]);
+          const $_Movie = $($_MovieList[movieIndex]);
           if ($_Movie.find('a.redBt').attr('href')) {
             const gewaraLink = 'http://www.gewara.com'
               + $_Movie

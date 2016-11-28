@@ -1,15 +1,15 @@
 {
-  "name": "moive-cawler-api",
+  "name": "moive-crawler-api",
   "version": "0.2.1",
   "description": "淘宝，猫眼，格瓦拉影票信息抓取接口",
-  "main": "index.js",
+  "main": "app.js",
   "scripts": {
-    "start": "node --harmony-async-await index.js",
-    "dev": "set DEBUG=debug & node-dev --harmony-async-await index.js"
+    "start": "node --harmony-async-await app.js",
+    "dev": "set DEBUG=debug & node-dev --harmony-async-await app.js"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/codelegant/moive-cawler-api.git"
+    "url": "git+https://github.com/codelegant/moive-crawler-api.git"
   },
   "keywords": [
     "request","request-promise","cheerio","phantom"
@@ -17,9 +17,9 @@
   "author": "codelegant laichuanfeng@hotmail.com",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/codelegant/moive-cawler-api/issues"
+    "url": "https://github.com/codelegant/moive-crawler-api/issues"
   },
-  "homepage": "https://github.com/codelegant/moive-cawler-api#readme",
+  "homepage": "https://github.com/codelegant/moive-crawler-api#readme",
   "dependencies": {
     "chalk": "^1.1.3",
     "cheerio": "^0.22.0",

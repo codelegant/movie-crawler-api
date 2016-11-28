@@ -1,7 +1,7 @@
 const restify = require('restify');
 const debug = require('debug')('debug');
 
-const cawler = require('../cawler/index');
+const cawler = require('../crawler/index');
 const cliLog = require('../libs/cliLog');
 const MovieDb = require('../db/MovieDb');
 

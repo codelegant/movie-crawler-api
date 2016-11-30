@@ -20,3 +20,6 @@
     - 影院信息需要新集合 `cinemas`，包含 `cityId`,`ids`,`name`,`address`
     - 影院排片信息用 `schedules`，包含影院 `ObjectId`，电影 `Id`，数组类型的 日期，场次，票价等的对象
         - 用票价区分不同网站，某个网站有票价，说明这个时间段有排片
+
+#### TODO
+- 使用 cheerio 的 .toArray() 方法将类数组转移为数组

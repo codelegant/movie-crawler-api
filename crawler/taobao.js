@@ -138,7 +138,7 @@ function getDetail({ taobaoCityId, cityName, taobaoMovieId, cinemaId, date }) {
         const $_Target = $($_List[index]);
         list.push({
           //cinemaId
-          taobaoCinemaId: $_Target.data('param').replace(/.*cinemaId=([0-9]*).*/, '$1'),
+          taobaoCinemaId: $_Target.data('param').replace(/.*cinemaId=([0-9]*)&.*/, '$1'),
           name: $_Target.text(),
         });
       }
@@ -166,20 +166,39 @@ function getDetail({ taobaoCityId, cityName, taobaoMovieId, cinemaId, date }) {
     transform: body => cheerio.load(body),
   })
     .then($ => {
-      const $selectTags = $('.select-tags');
-      const $_Arr = [$selectTags[0], $selectTags[1]];
-      const [areaObj,cinemasObj]= $_Arr;
-      const [areas,cinemas]=[getAreas(areaObj), getCinemas(cinemasObj)];
+      const [areaObj,cinemasObj,datesObj]=(() => {
+        const $selectTags = $('.select-tags');
+        return [$selectTags[0], $selectTags[1], $selectTags[2]];
+      })();
 
+      const [areas,cinemas]=[getAreas(areaObj), getCinemas(cinemasObj)];
+      (() => {
+        $('.cinemabar-wrap').find('h4').remove();
+
+      })();
+      const cinemaAddress = $('.cinemabar-wrap').text();//TODO:提取地址信息
+      const current = {
+        city: $(areaObj)
+          .find('a.current')
+          .text(),
+        cinema: $(cinemasObj)
+          .find('a.current')
+          .data('param')
+          .replace(/.*cinemaId=([0-9]*)&.*/, '$1'),
+        date: $(datesObj)
+          .find('a.current')
+          .data('param')
+          .replace(/.*date=([-0-9]*)&.*/, '$1'),
+      };
     })
     .catch(e => cliLog.error(e));
 }
 
-getDetail({
-  taobaoCityId: 440300,
-  cityName: '深圳',
-  taobaoMovieId: 156419
-});
+// getDetail({
+//   taobaoCityId: 440300,
+//   cityName: '深圳',
+//   taobaoMovieId: 178125
+// });
 
 module.exports = {
   getCityList,

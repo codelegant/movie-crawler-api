@@ -1,6 +1,6 @@
 {
   "name": "moive-crawler-api",
-  "version": "0.2.1",
+  "version": "0.3.1",
   "description": "淘宝，猫眼，格瓦拉影票信息抓取接口",
   "main": "app.js",
   "scripts": {

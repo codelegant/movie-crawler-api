@@ -28,35 +28,31 @@ function getHotMovieList(cityCode = 440300) {
     let pageNo = 0;
     let $ = cheerio.load(await getOnePageList());
     const listClassName = 'li.effectLi';
-    let $_MovieList = $(listClassName);
+    let movieEleArr = $(listClassName).toArray();
     do {
-      for (const movieIndex in $_MovieList) {
-        if (movieIndex < $_MovieList.length
-          && $_MovieList.hasOwnProperty(movieIndex)) {
+      for (const movie of movieEleArr) {
+        const $_Movie = $(movie);
+        if ($_Movie.find('a.redBt').attr('href')) {
+          const gewaraLink = 'http://www.gewara.com'
+            + $_Movie
+              .find('a.redBt')
+              .attr('href');
 
-          const $_Movie = $($_MovieList[movieIndex]);
-          if ($_Movie.find('a.redBt').attr('href')) {
-            const gewaraLink = 'http://www.gewara.com'
-              + $_Movie
-                .find('a.redBt')
-                .attr('href');
-
-            const name = $_Movie.find('.ui_movieType').attr('title');
-            movieList.push({
-              link: {
-                gewaraLink
-              }, //影片首页，同时也是购票链接
-              name, //名称,
-              movieId: {
-                gewaraId: gewaraLink.replace(/.*\/movie\/([0-9]*)/, '$1'),
-              }
-            });
-          }
+          const name = $_Movie.find('.ui_movieType').attr('title');
+          movieList.push({
+            link: {
+              gewaraLink
+            }, //影片首页，同时也是购票链接
+            name, //名称,
+            movieId: {
+              gewaraId: gewaraLink.replace(/.*\/movie\/([0-9]*)/, '$1'),
+            }
+          });
         }
       }
       $ = cheerio.load(await getOnePageList(pageNo += 1));
-      $_MovieList = $(listClassName);
-    } while ($_MovieList.length);
+      movieEleArr = $(listClassName).toArray();
+    } while (movieEleArr.length);
     return movieList;
   })();
 }

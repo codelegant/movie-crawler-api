@@ -32,24 +32,20 @@ function getCityList() {
     })
     .then(content => {
       const $ = cheerio.load(content);
-      const $_CityList = $('.city-list').find('ul li');
+      const cityEleArr = $('.city-list').find('ul li').toArray();
       const cityList = {};
-      for (const listIndex in $_CityList) {
-        if (listIndex < $_CityList.length
-          && $_CityList.hasOwnProperty(listIndex)) {
-
-          const $_List = $($_CityList[listIndex]);
-          const key = $_List.find('span').text();
-          cityList[key] = [];
-          const $_AList = $_List.find('a');
-          for (const aIndex in $_AList) {
-            if (aIndex < $_AList.length && $_AList.hasOwnProperty(aIndex)) {
-              const $_A = $($_AList[aIndex]);
-              cityList[key].push({
-                regionName: $_A.text(),
-                cityCode: Number($_A.attr('data-ci'))
-              });
-            }
+      for (const city of cityEleArr) {
+        const $_List = $(city);
+        const key = $_List.find('span').text();
+        cityList[key] = [];
+        const $_AList = $_List.find('a');
+        for (const aIndex in $_AList) {
+          if (aIndex < $_AList.length && $_AList.hasOwnProperty(aIndex)) {
+            const $_A = $($_AList[aIndex]);
+            cityList[key].push({
+              regionName: $_A.text(),
+              cityCode: Number($_A.attr('data-ci'))
+            });
           }
         }
       }
@@ -83,12 +79,11 @@ function getHotMovieList(cityCode = 30) {
     let offset = 0;
     let $ = cheerio.load(await getOnePageList());
     const listClassName = '.movie-list';
-    let $_MovieList = $(listClassName);
+    let movieEleArr = $(listClassName);
     do {
-      const $_DdList = $_MovieList.find('dd');
-      for (const ddIndex in $_DdList) {
-        if (ddIndex < $_DdList.length && $_DdList.hasOwnProperty(ddIndex)) {
-          const $_Dd = $($_DdList[ddIndex]);
+      const $_DdList = movieEleArr.find('dd').toArray();
+      for (const dd of $_DdList) {
+          const $_Dd = $(dd);
           const id = $_Dd
             .find('.movie-item a')
             .data('val')
@@ -102,11 +97,10 @@ function getHotMovieList(cityCode = 30) {
               maoyanId: id,
             }
           });
-        }
       }
       $ = cheerio.load(await getOnePageList(offset += 30));
-      $_MovieList = $(listClassName);
-    } while ($_MovieList.length);
+      movieEleArr = $(listClassName);
+    } while (movieEleArr.length);
     return movieList;
   })();
 }

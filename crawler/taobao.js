@@ -47,53 +47,44 @@ function getHotMovieList(city) {
   })
     .then($ => {
       const movieList = [];
-      const $_MovieList = $($('.tab-movie-list')[0]).find('.movie-card-wrap');
+      const movieEleArr = $($('.tab-movie-list')[0]).find('.movie-card-wrap').toArray();
       //.movie-card-wrap>movie-card-tag>.t-201
-      for (const movieIndex in $_MovieList) {
-        if (movieIndex < $_MovieList.length
-          && $_MovieList.hasOwnProperty(movieIndex)) {
-          const $_Movie = $($_MovieList[movieIndex]);
+      for (const movie of movieEleArr) {
+        const $_Movie = $(movie);
+        const infoList = [];
+        const infoEleArr = $_Movie.find('.movie-card-list').find('span').toArray();
+        for (const info of infoEleArr) infoList.push($(info).text());
 
-          const infoList = [];
-          const $_InfoList = $_Movie.find('.movie-card-list').find('span');
-          for (const infoIndex in $_InfoList) {
-            if (infoIndex < $_InfoList.length
-              && $_InfoList.hasOwnProperty(infoIndex)) {
-              infoList.push($($_InfoList[infoIndex]).text());
-            }
-          }
+        const taobaoLink = $_Movie
+          .find('.movie-card-buy')
+          .attr('href');
 
-          const taobaoLink = $_Movie
-            .find('.movie-card-buy')
-            .attr('href');
+        const img = $_Movie
+          .find('.movie-card-poster')
+          .children('img')
+          .attr('src');
 
-          const img = $_Movie
-            .find('.movie-card-poster')
-            .children('img')
-            .attr('src');
+        const name = $_Movie
+          .find('.movie-card-name')
+          .children('.bt-l').text();
 
-          const name = $_Movie
-            .find('.movie-card-name')
-            .children('.bt-l').text();
+        //201(3D-IMAX) 202(3D) 203(IMAX)
+        const format = $_Movie
+          .find('.movie-card-tag')
+          .find('i')
+          .attr('class')
+          .slice(2);
 
-          //201(3D-IMAX) 202(3D) 203(IMAX)
-          const format = $_Movie
-            .find('.movie-card-tag')
-            .find('i')
-            .attr('class')
-            .slice(2);
+        const taobaoMovieId = taobaoLink.replace(/.*showId=([0-9]*).*/, '$1');
 
-          const taobaoMovieId = taobaoLink.replace(/.*showId=([0-9]*).*/, '$1');
-
-          movieList.push({
-            link: { taobaoLink }, //影片首页，同时也是购票链接
-            img, //缩略图
-            name, //名称,
-            format: format ? ~ ~ format : null,
-            infoList, //介绍信息，导演，主演等
-            movieId: { taobaoMovieId }  //电影Id
-          });
-        }
+        movieList.push({
+          link: { taobaoLink }, //影片首页，同时也是购票链接
+          img, //缩略图
+          name, //名称,
+          format: format ? ~ ~ format : null,
+          infoList, //介绍信息，导演，主演等
+          movieId: { taobaoMovieId }  //电影Id
+        });
       }
       return movieList;
     })
@@ -166,17 +157,13 @@ function getDetail({ taobaoCityId, cityName, taobaoMovieId, cinemaId, date }) {
     transform: body => cheerio.load(body),
   })
     .then($ => {
-      const [areaObj,cinemasObj,datesObj]=(() => {
-        const $selectTags = $('.select-tags');
-        return [$selectTags[0], $selectTags[1], $selectTags[2]];
-      })();
-
+      const [areaObj,cinemasObj,datesObj]=$('.select-tags').toArray();
       const [areas,cinemas]=[getAreas(areaObj), getCinemas(cinemasObj)];
-      (() => {
-        $('.cinemabar-wrap').find('h4').remove();
-
-      })();
+      // (() => {
+      //   $('.cinemabar-wrap').find('h4').remove();
+      // })();
       const cinemaAddress = $('.cinemabar-wrap').text();//TODO:提取地址信息
+      console.log(areas);
       const current = {
         city: $(areaObj)
           .find('a.current')
@@ -194,11 +181,11 @@ function getDetail({ taobaoCityId, cityName, taobaoMovieId, cinemaId, date }) {
     .catch(e => cliLog.error(e));
 }
 
-// getDetail({
-//   taobaoCityId: 440300,
-//   cityName: '深圳',
-//   taobaoMovieId: 178125
-// });
+getDetail({
+  taobaoCityId: 440300,
+  cityName: '深圳',
+  taobaoMovieId: 178125
+});
 
 module.exports = {
   getCityList,

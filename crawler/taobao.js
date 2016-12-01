@@ -140,21 +140,18 @@ function getDetail({ taobaoCityId, cityName, taobaoMovieId, cinemaId, date }) {
 
   function getSchedules($) {
     const scheduleEleArr = $('.hall-table').find('tbody').find('tr').toArray();
-    return scheduleEleArr.map(schedule => {
-      const $_Schedule = $(schedule);
-      return {
-        startTime: $_Schedule.find('.hall-time').find('em').text(),
-        endTime: (() => {
-          const $_HallTime = $_Schedule.find('.hall-time');
-          $_HallTime.find('em').remove();
-          return $_HallTime.text().trim().replace(/.*(\d{2}:\d{2}).*/, '$1');
-        })(),
-        type: $_Schedule.find('.hall-type').text().trim(),
-        name: $_Schedule.find('.hall-name').text().trim(),
-        price: $_Schedule.find('.hall-price').find('em').text(),
-        buyLink: $_Schedule.find('.seat-btn').attr('href'),
-      };
-    });
+    return scheduleEleArr.map(schedule => ({
+      startTime: $(schedule).find('.hall-time').find('em').text(),
+      endTime: (() => {
+        const $_HallTime = $(schedule).find('.hall-time');
+        $_HallTime.find('em').remove();
+        return $_HallTime.text().trim().replace(/.*(\d{2}:\d{2}).*/, '$1');
+      })(),
+      type: $(schedule).find('.hall-type').text().trim(),
+      name: $(schedule).find('.hall-name').text().trim(),
+      price: $(schedule).find('.hall-price').find('em').text(),
+      buyLink: $(schedule).find('.seat-btn').attr('href'),
+    }));
   }
 
   const j = rq.jar();

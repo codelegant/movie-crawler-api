@@ -138,8 +138,23 @@ function getDetail({ taobaoCityId, cityName, taobaoMovieId, cinemaId, date }) {
   }
 
 
-  function getSchedules(htmlStr) {
-
+  function getSchedules($) {
+    const scheduleEleArr = $('.hall-table').find('tbody').find('tr').toArray();
+    return scheduleEleArr.map(schedule => {
+      const $_Schedule = $(schedule);
+      return {
+        startTime: $_Schedule.find('.hall-time').find('em').text(),
+        endTime: (() => {
+          const $_HallTime = $_Schedule.find('.hall-time');
+          $_HallTime.find('em').remove();
+          return $_HallTime.text().trim().replace(/.*(\d{2}:\d{2}).*/, '$1');
+        })(),
+        type: $_Schedule.find('.hall-type').text().trim(),
+        name: $_Schedule.find('.hall-name').text().trim(),
+        price: $_Schedule.find('.hall-price').find('em').text(),
+        buyLink: $_Schedule.find('.seat-btn').attr('href'),
+      };
+    });
   }
 
   const j = rq.jar();
@@ -158,12 +173,7 @@ function getDetail({ taobaoCityId, cityName, taobaoMovieId, cinemaId, date }) {
   })
     .then($ => {
       const [areaObj,cinemasObj,datesObj]=$('.select-tags').toArray();
-      const [areas,cinemas]=[getAreas(areaObj), getCinemas(cinemasObj)];
-      // (() => {
-      //   $('.cinemabar-wrap').find('h4').remove();
-      // })();
-      const cinemaAddress = $('.cinemabar-wrap').text();//TODO:提取地址信息
-      console.log(areas);
+      const [areas,cinemas,schedules]=[getAreas(areaObj), getCinemas(cinemasObj), getSchedules($)];
       const current = {
         city: $(areaObj)
           .find('a.current')
@@ -176,7 +186,14 @@ function getDetail({ taobaoCityId, cityName, taobaoMovieId, cinemaId, date }) {
           .find('a.current')
           .data('param')
           .replace(/.*date=([-0-9]*)&.*/, '$1'),
+        address: (() => {
+          const $_CinemaBarWrap = $('.cinemabar-wrap');
+          $_CinemaBarWrap.find('h4,a').remove();
+          return $_CinemaBarWrap.text().split(' ')[0].trim();
+        })()
       };
+      console.log(schedules);
+      return { areas, cinemas, schedules, current };
     })
     .catch(e => cliLog.error(e));
 }

@@ -34,7 +34,7 @@ function getCityList() {
  * @param city {number}
  * @return {Promise.<Array>}
  */
-function getHotMovieList(city) {
+function getHotMovieList(city = 440300) {
   return rq({
     uri: `${host}/showList.htm`,
     method: 'GET',
@@ -45,113 +45,103 @@ function getHotMovieList(city) {
     headers,
     transform: body => cheerio.load(body),
   })
-    .then($ => {
-      const movieList = [];
-      const movieEleArr = $($('.tab-movie-list')[0]).find('.movie-card-wrap').toArray();
-      //.movie-card-wrap>movie-card-tag>.t-201
-      for (const movie of movieEleArr) {
-        const $_Movie = $(movie);
-        const infoList = [];
-        const infoEleArr = $_Movie.find('.movie-card-list').find('span').toArray();
-        for (const info of infoEleArr) infoList.push($(info).text());
+    .then($ =>
+      $($('.tab-movie-list')[0])
+        .find('.movie-card-wrap')
+        .toArray()
+        .map(movie => {
+          const infoList = $(movie).find('.movie-card-list')
+                                   .find('span')
+                                   .toArray()
+                                   .map(info => $(info).text());
 
-        const taobaoLink = $_Movie
-          .find('.movie-card-buy')
-          .attr('href');
+          const taobaoLink = $(movie).find('.movie-card-buy').attr('href');
 
-        const img = $_Movie
-          .find('.movie-card-poster')
-          .children('img')
-          .attr('src');
+          const img = $(movie).find('.movie-card-poster')
+                              .children('img')
+                              .attr('src');
 
-        const name = $_Movie
-          .find('.movie-card-name')
-          .children('.bt-l').text();
+          const name = $(movie).find('.movie-card-name')
+                               .children('.bt-l')
+                               .text();
 
-        //201(3D-IMAX) 202(3D) 203(IMAX)
-        const format = $_Movie
-          .find('.movie-card-tag')
-          .find('i')
-          .attr('class')
-          .slice(2);
+          //201(3D-IMAX) 202(3D) 203(IMAX)
+          const format = $(movie).find('.movie-card-tag')
+                                 .find('i')
+                                 .attr('class')
+                                 .slice(2);
 
-        const taobaoMovieId = taobaoLink.replace(/.*showId=([0-9]*).*/, '$1');
+          const taobaoMovieId = taobaoLink.replace(/.*showId=([0-9]*).*/, '$1');
 
-        movieList.push({
-          link: { taobaoLink }, //影片首页，同时也是购票链接
-          img, //缩略图
-          name, //名称,
-          format: format ? ~ ~ format : null,
-          infoList, //介绍信息，导演，主演等
-          movieId: { taobaoMovieId }  //电影Id
-        });
-      }
-      return movieList;
-    })
+          return {
+            link: { taobaoLink }, //影片首页，同时也是购票链接
+            img, //缩略图
+            name, //名称,
+            format: format ? ~ ~ format : null,
+            infoList, //介绍信息，导演，主演等
+            movieId: { taobaoMovieId }  //电影Id
+          };
+        })
+    )
     .catch(e => cliLog.error(e));
 }
 
+/**
+ * 获取区域，影院，排期等信息
+ * @param taobaoCityId {Number}
+ * @param cityName {String}
+ * @param taobaoMovieId {Number}
+ * @param cinemaId {Number}
+ * @param date {Date}
+ * @return {Promise.<Object>}
+ */
 function getDetail({ taobaoCityId, cityName, taobaoMovieId, cinemaId, date }) {
 
   /**
    * 获取当前城市的区域信息
-   * @param htmlStr {Object}
+   * @param htmlStr {Element}
    * @return {Array}
    */
   function getAreas(htmlStr) {
     const $ = cheerio.load(htmlStr);
-    const list = [];
-    const $_List = $('a');
-    for (const index in $_List) {
-      if (index < $_List.length
-        && $_List.hasOwnProperty(index)
-        && index > 0) {
-        const $_Target = $($_List[index]);
-        list.push($_Target.text());
-      }
-    }
-    return list;
+    return $('a').toArray().map(area => $(area).text());
   }
 
   /**
    * 获取影院信息
-   * @param htmlStr {Object}
+   * @param htmlStr {Element}
    * @returns {Array}
    */
   function getCinemas(htmlStr) {
     const $ = cheerio.load(htmlStr);
-    const list = [];
-    const $_List = $('a');
-    for (const index in $_List) {
-      if (index < $_List.length
-        && $_List.hasOwnProperty(index)
-        && index > 0) {
-        const $_Target = $($_List[index]);
-        list.push({
-          //cinemaId
-          taobaoCinemaId: $_Target.data('param').replace(/.*cinemaId=([0-9]*)&.*/, '$1'),
-          name: $_Target.text(),
-        });
-      }
-    }
-    return list;
+    return $('a').toArray().map(cinema => ({
+      taobaoCinemaId: $(cinema).data('param').replace(/.*cinemaId=([0-9]*)&.*/, '$1'),
+      name: $(cinema).text(),
+    }))
   }
 
-
+  /**
+   * 电影排期
+   * @param $ {Function}
+   * @return {Object}
+   */
   function getSchedules($) {
-    const scheduleEleArr = $('.hall-table').find('tbody').find('tr').toArray();
-    return scheduleEleArr.map(schedule => ({
-      startTime: $(schedule).find('.hall-time').find('em').text(),
-      endTime: (() => {
-        const $_HallTime = $(schedule).find('.hall-time');
-        $_HallTime.find('em').remove();
-        return $_HallTime.text().trim().replace(/.*(\d{2}:\d{2}).*/, '$1');
-      })(),
-      type: $(schedule).find('.hall-type').text().trim(),
-      name: $(schedule).find('.hall-name').text().trim(),
-      price: $(schedule).find('.hall-price').find('em').text(),
-      buyLink: $(schedule).find('.seat-btn').attr('href'),
-    }));
+    return $('.hall-table')
+      .find('tbody')
+      .find('tr')
+      .toArray()
+      .map(schedule => ({
+        startTime: $(schedule).find('.hall-time').find('em').text(),
+        endTime: (() => {
+          const $_HallTime = $(schedule).find('.hall-time');
+          $_HallTime.find('em').remove();
+          return $_HallTime.text().trim().replace(/.*(\d{2}:\d{2}).*/, '$1');
+        })(),
+        type: $(schedule).find('.hall-type').text().trim(),
+        name: $(schedule).find('.hall-name').text().trim(),
+        price: $(schedule).find('.hall-price').find('em').text(),
+        buyLink: $(schedule).find('.seat-btn').attr('href'),
+      }));
   }
 
   const j = rq.jar();
@@ -172,35 +162,37 @@ function getDetail({ taobaoCityId, cityName, taobaoMovieId, cinemaId, date }) {
       const [areaObj,cinemasObj,datesObj]=$('.select-tags').toArray();
       const [areas,cinemas,schedules]=[getAreas(areaObj), getCinemas(cinemasObj), getSchedules($)];
       const current = {
-        city: $(areaObj)
-          .find('a.current')
-          .text(),
-        cinema: $(cinemasObj)
-          .find('a.current')
-          .data('param')
-          .replace(/.*cinemaId=([0-9]*)&.*/, '$1'),
-        date: $(datesObj)
-          .find('a.current')
-          .data('param')
-          .replace(/.*date=([-0-9]*)&.*/, '$1'),
+        city: $(areaObj).find('a.current').text(),
+
+        cinema: $(cinemasObj).find('a.current')
+                             .data('param')
+                             .replace(/.*cinemaId=([0-9]*)&.*/, '$1'),
+
+        date: $(datesObj).find('a.current')
+                         .data('param')
+                         .replace(/.*date=([-0-9]*)&.*/, '$1'),
+
         address: (() => {
           const $_CinemaBarWrap = $('.cinemabar-wrap');
           $_CinemaBarWrap.find('h4,a').remove();
-          return $_CinemaBarWrap.text().split(' ')[0].trim();
+          return $_CinemaBarWrap.text().split(' ')[0].trim().replace(/.*：(.*)/, '$1');
         })()
       };
-      console.log(schedules);
       return { areas, cinemas, schedules, current };
     })
     .catch(e => cliLog.error(e));
 }
 
-getDetail({
-  taobaoCityId: 440300,
-  cityName: '深圳',
-  taobaoMovieId: 178125
-});
 
+(async() => {
+  const test = await getDetail({
+    taobaoCityId: 440300,
+    cityName: '深圳',
+    taobaoMovieId: 178125
+  });
+
+  // console.log(await getHotMovieList(440300));
+})();
 module.exports = {
   getCityList,
   getHotMovieList,

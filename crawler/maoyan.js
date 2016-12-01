@@ -37,17 +37,12 @@ function getCityList() {
       for (const city of cityEleArr) {
         const $_List = $(city);
         const key = $_List.find('span').text();
-        cityList[key] = [];
-        const $_AList = $_List.find('a');
-        for (const aIndex in $_AList) {
-          if (aIndex < $_AList.length && $_AList.hasOwnProperty(aIndex)) {
-            const $_A = $($_AList[aIndex]);
-            cityList[key].push({
-              regionName: $_A.text(),
-              cityCode: Number($_A.attr('data-ci'))
-            });
-          }
-        }
+        cityList[key] = $_List.find('a')
+                              .toArray()
+                              .map(a => ({
+                                regionName: $(a).text(),
+                                cityCode: Number($(a).attr('data-ci'))
+                              }));
       }
       sitePage.close();
       phInstance.exit();
@@ -81,29 +76,33 @@ function getHotMovieList(cityCode = 30) {
     const listClassName = '.movie-list';
     let movieEleArr = $(listClassName);
     do {
-      const $_DdList = movieEleArr.find('dd').toArray();
-      for (const dd of $_DdList) {
-          const $_Dd = $(dd);
-          const id = $_Dd
-            .find('.movie-item a')
-            .data('val')
-            .replace(/{[a-z]+:(\d+)}/gi, '$1');
-          movieList.push({
-            link: {
-              maoyanLink: `http://www.meituan.com/dianying/${id}?#content`
-            }, //影片首页，同时也是购票链接
-            name: $_Dd.find('.movie-item-title').attr('title'), //名称,
-            movieId: {
-              maoyanId: id,
+      movieList=movieList.concat(
+        movieEleArr
+          .find('dd')
+          .toArray()
+          .map(dd => {
+            const id = $(dd)
+              .find('.movie-item a')
+              .data('val')
+              .replace(/{[a-z]+:(\d+)}/gi, '$1');
+            return {
+              link: {
+                maoyanLink: `http://www.meituan.com/dianying/${id}?#content`
+              }, //影片首页，同时也是购票链接
+              name: $(dd).find('.movie-item-title').attr('title'), //名称,
+              movieId: {
+                maoyanId: id,
+              }
             }
-          });
-      }
+          })
+      );
       $ = cheerio.load(await getOnePageList(offset += 30));
       movieEleArr = $(listClassName);
     } while (movieEleArr.length);
     return movieList;
   })();
 }
+
 
 module.exports = {
   getCityList,

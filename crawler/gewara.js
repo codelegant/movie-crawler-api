@@ -24,7 +24,7 @@ function getHotMovieList(cityCode = 440300) {
     .then(htmlString => htmlString)
     .catch(e => cliLog.error(e));
   return (async() => {
-    let movieList = [];
+    const movieList = [];
     let pageNo = 0;
     let $ = cheerio.load(await getOnePageList());
     const listClassName = 'li.effectLi';
@@ -33,11 +33,8 @@ function getHotMovieList(cityCode = 440300) {
       for (const movie of movieEleArr) {
         const $_Movie = $(movie);
         if ($_Movie.find('a.redBt').attr('href')) {
-          const gewaraLink = 'http://www.gewara.com'
-            + $_Movie
-              .find('a.redBt')
-              .attr('href');
-
+          const gewaraLink = 'http://www.gewara.com' + $_Movie.find('a.redBt')
+                                                              .attr('href');
           const name = $_Movie.find('.ui_movieType').attr('title');
           movieList.push({
             link: {

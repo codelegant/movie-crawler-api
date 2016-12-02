@@ -65,44 +65,47 @@ function getHotMovieList(cityCode = 30) {
       uri,
       jar: j,
       headers,
-      qs: { showType: 1, offset }
+      qs: { showType: 1, sortId: 1, offset }
     })
       .then(htmlString => htmlString)
       .catch(e => cliLog.error(e));
   return (async() => {
-    let movieList = [];
-    let offset = 0;
     let $ = cheerio.load(await getOnePageList());
+    let offset = 0;
     const listClassName = '.movie-list';
-    let movieEleArr = $(listClassName);
+    const movieEleArr = $(listClassName).find('dd').toArray();
+    let movieEleLength = movieEleArr.length;
+
     do {
-      movieList=movieList.concat(
-        movieEleArr
-          .find('dd')
-          .toArray()
-          .map(dd => {
-            const id = $(dd)
-              .find('.movie-item a')
-              .data('val')
-              .replace(/{[a-z]+:(\d+)}/gi, '$1');
-            return {
-              link: {
-                maoyanLink: `http://www.meituan.com/dianying/${id}?#content`
-              }, //影片首页，同时也是购票链接
-              name: $(dd).find('.movie-item-title').attr('title'), //名称,
-              movieId: {
-                maoyanId: id,
-              }
-            }
-          })
-      );
       $ = cheerio.load(await getOnePageList(offset += 30));
-      movieEleArr = $(listClassName);
-    } while (movieEleArr.length);
-    return movieList;
+      const currentPageArr = $(listClassName).find('dd').toArray();
+      movieEleLength = currentPageArr.length;
+      Array.prototype.push.apply(movieEleArr, currentPageArr);
+    } while (movieEleLength);
+
+    return movieEleArr
+      .map(dd => {
+        const id = $(dd)
+          .find('.movie-item a')
+          .data('val')
+          .replace(/{[a-z]+:(\d+)}/gi, '$1');
+        return {
+          link: {
+            maoyanLink: `http://www.meituan.com/dianying/${id}?#content`
+          }, //影片首页，同时也是购票链接
+          name: $(dd).find('.movie-item-title').attr('title'), //名称,
+          movieId: {
+            maoyanId: id,
+          }
+        }
+      });
   })();
 }
 
+(async() => {
+  const list = await getHotMovieList();
+  console.log(list.length);
+})();
 
 module.exports = {
   getCityList,

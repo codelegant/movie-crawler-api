@@ -24,35 +24,43 @@ function getHotMovieList(cityCode = 440300) {
     .then(htmlString => htmlString)
     .catch(e => cliLog.error(e));
   return (async() => {
-    const movieList = [];
     let pageNo = 0;
     let $ = cheerio.load(await getOnePageList());
     const listClassName = 'li.effectLi';
-    let movieEleArr = $(listClassName).toArray();
+    const movieEleArr = $(listClassName).toArray();
+    let movieEleLength = movieEleArr.length;
+
     do {
-      for (const movie of movieEleArr) {
-        const $_Movie = $(movie);
-        if ($_Movie.find('a.redBt').attr('href')) {
-          const gewaraLink = 'http://www.gewara.com' + $_Movie.find('a.redBt')
-                                                              .attr('href');
-          const name = $_Movie.find('.ui_movieType').attr('title');
-          movieList.push({
-            link: {
-              gewaraLink
-            }, //影片首页，同时也是购票链接
-            name, //名称,
-            movieId: {
-              gewaraId: gewaraLink.replace(/.*\/movie\/([0-9]*)/, '$1'),
-            }
-          });
-        }
-      }
       $ = cheerio.load(await getOnePageList(pageNo += 1));
-      movieEleArr = $(listClassName).toArray();
-    } while (movieEleArr.length);
-    return movieList;
+      const currentPageArr = $(listClassName).toArray();
+      movieEleLength = currentPageArr.length;
+      Array.prototype.push.apply(movieEleArr, currentPageArr);
+    } while (movieEleLength);
+
+    return movieEleArr
+      .map(movie => {
+        if (! $(movie).find('a.redBt').attr('href')) return null;
+        const name = $(movie).find('.ui_movieType').attr('title');
+        const gewaraLink = 'http://www.gewara.com'
+          + $(movie).find('a.redBt').attr('href');
+        return {
+          link: {
+            gewaraLink
+          }, //影片首页，同时也是购票链接
+          name, //名称,
+          movieId: {
+            gewaraId: gewaraLink.replace(/.*\/movie\/([0-9]*)/, '$1'),
+          }
+        };
+      })
+      .filter(ele => ! ! ele);
   })();
 }
+
+(async() => {
+  const list = await getHotMovieList();
+  console.log(list.length);
+})();
 
 module.exports = {
   getHotMovieList

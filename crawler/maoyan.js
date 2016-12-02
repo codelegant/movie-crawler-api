@@ -13,8 +13,8 @@ const headers = {
  * @return {Promise.<Array>}
  */
 function getCityList() {
-  let sitePage = undefined;
-  let phInstance = undefined;
+  let sitePage = null;
+  let phInstance = null;
 
   return phantom
     .create()
@@ -27,23 +27,24 @@ function getCityList() {
       return page.open('http://maoyan.com/');
     })
     .then(status => {
-      if (status !== 'success') throw Error(`StatusCode:${status}`);
+      if (status !== 'success') return cliLog.error(`StatusCode:${status}`);
       return sitePage.property('content');
     })
     .then(content => {
       const $ = cheerio.load(content);
-      const cityEleArr = $('.city-list').find('ul li').toArray();
       const cityList = {};
-      for (const city of cityEleArr) {
-        const $_List = $(city);
-        const key = $_List.find('span').text();
-        cityList[key] = $_List.find('a')
-                              .toArray()
-                              .map(a => ({
-                                regionName: $(a).text(),
-                                cityCode: Number($(a).attr('data-ci'))
-                              }));
-      }
+      $('.city-list')
+        .find('li')
+        .toArray()
+        .forEach(city => {
+          const key = $(city).find('span').text();
+          cityList[key] = $(city).find('a')
+                                 .toArray()
+                                 .map(a => ({
+                                   regionName: $(a).text(),
+                                   cityCode: Number($(a).attr('data-ci'))
+                                 }));
+        });
       sitePage.close();
       phInstance.exit();
       return cityList;
@@ -60,8 +61,9 @@ function getHotMovieList(cityCode = 30) {
   const uri = 'http://maoyan.com/films';
   const cookie = rq.cookie(`ci=${cityCode}`);//设置城市 cookie ，深圳
   j.setCookie(cookie, uri);
-  const getOnePageList = (offset = 0) =>
-    rq({
+
+  function getOnePageList(offset = 0) {
+    return rq({
       uri,
       jar: j,
       headers,
@@ -69,6 +71,8 @@ function getHotMovieList(cityCode = 30) {
     })
       .then(htmlString => htmlString)
       .catch(e => cliLog.error(e));
+  }
+
   return (async() => {
     let $ = cheerio.load(await getOnePageList());
     let offset = 0;
@@ -101,11 +105,6 @@ function getHotMovieList(cityCode = 30) {
       });
   })();
 }
-
-(async() => {
-  const list = await getHotMovieList();
-  console.log(list.length);
-})();
 
 module.exports = {
   getCityList,

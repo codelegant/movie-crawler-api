@@ -88,14 +88,15 @@ function getHotMovieList(city = 440300) {
 
 /**
  * 获取区域，影院，排期等信息
- * @param taobaoCityId {Number}
- * @param cityName {String}
- * @param taobaoMovieId {Number}
- * @param cinemaId {Number}
- * @param date {Date}
+ * @param taobaoCityId {Number} 淘宝的城市 ID
+ * @param cityName {String} 城市名称
+ * @param taobaoMovieId {Number} 淘宝的电影 ID
+ * @param regionName {String} 城市下属区域的名称
+ * @param cinemaId {Number} 影院的 ID
+ * @param date {Date} 日期
  * @return {Promise.<Object>}
  */
-function getDetail({ taobaoCityId, cityName, taobaoMovieId, cinemaId, date }) {
+function getDetail({ taobaoCityId, cityName, taobaoMovieId, regionName, cinemaId, date }) {
 
   /**
    * 获取当前城市的区域信息
@@ -155,7 +156,14 @@ function getDetail({ taobaoCityId, cityName, taobaoMovieId, cinemaId, date }) {
     uri,
     jar: j,
     headers,
-    qs: { showId: taobaoMovieId, ts: Date.now(), n_s: 'new' },
+    qs: {
+      showId: taobaoMovieId,
+      regionName,
+      cinemaId,
+      date,
+      ts: Date.now(),
+      n_s: 'new'
+    },
     transform: body => cheerio.load(body),
   })
     .then($ => {
@@ -190,7 +198,7 @@ function getDetail({ taobaoCityId, cityName, taobaoMovieId, cinemaId, date }) {
     cityName: '深圳',
     taobaoMovieId: 178125
   });
-
+  console.log(test);
   // console.log(await getHotMovieList(440300));
 })();
 module.exports = {

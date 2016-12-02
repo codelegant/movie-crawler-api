@@ -1,5 +1,4 @@
 const _mergeWith = require('lodash.mergewith');
-const _isArray = require('lodash.isarray');
 const _isObject = require('lodash.isobject');
 const _unionWith = require('lodash.unionwith');
 const _unset = require('lodash.unset');
@@ -49,7 +48,7 @@ async function cities(type = 'arr') {
     cityLists[0],
     cityLists[1],
     (target, src) => {
-      if (_isArray(target) && _isArray(src)) {
+      if (Array.isArray(target) && Array.isArray(src)) {
         return _arrUnion(target, src);
       }
     }

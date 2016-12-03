@@ -8,7 +8,7 @@ const MovieDb = require('../db/MovieDb');
 /**
  * @desc 使用 cityId 从数据库中读取热门电影列表
  */
-async function getByCityIdFromDb(req, res, next) {
+const getByCityIdFromDb = async function getByCityIdFromDb(req, res, next) {
   try {
     const { cityId } = req.query;
     if (! cityId) {
@@ -31,12 +31,12 @@ async function getByCityIdFromDb(req, res, next) {
     cliLog.error(e);
     return next(new restify.InternalServerError('获取热门电影失败'));
   }
-}
+};
 
 /**
  * @desc 使用 cityId 从爬虫中读取热门电影列表
  */
-async function getByCityIdFromCawler(req, res, next) {
+const getByCityIdFromCawler = async function getByCityIdFromCawler(req, res, next) {
   try {
     const { cityId } = req.query;
     if (! cityId) {
@@ -80,12 +80,12 @@ async function getByCityIdFromCawler(req, res, next) {
     cliLog.error(e);
     return next(new restify.InternalServerError('获取热门电影失败'));
   }
-}
+};
 
 /**
  * @desc 使用 id 获取电影详情
  */
-async function getById(req, res, next) {
+const getById = async function getById(req, res, next) {
   try {
     const { id } = req.query;
     if (! id) return next(new restify.NotFoundError('未查询到电影信息'));
@@ -99,12 +99,12 @@ async function getById(req, res, next) {
     cliLog.error(e);
     return next(new restify.InternalServerError('获取电影信息失败'));
   }
-}
+};
 
 /**
  * @desc 使用 cityId 重新抓取热门电影并存储
  */
-async function put(req, res, next) {
+const put = async function put(req, res, next) {
   try {
     const { cityId } = req.query;
     if (! cityId) {
@@ -149,7 +149,7 @@ async function put(req, res, next) {
     cliLog.error(e);
     return next(new restify.InternalServerError('更新电影列表信息失败'));
   }
-}
+};
 
 module.exports = {
   getByCityIdFromDb,

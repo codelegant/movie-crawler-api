@@ -18,7 +18,7 @@ const cliLog = require('../libs/cliLog');
  * @param type {String<'arr'|'obj'>}
  * @return {Object|Array}
  */
-async function cities(type = 'arr') {
+const cities = async function cities(type = 'arr') {
   const cityLists = await Promise.all([
                                    taobao.getCityList(),
                                    maoyan.getCityList(),
@@ -66,14 +66,14 @@ async function cities(type = 'arr') {
     }
   });
   return citiesArr;
-}
+};
 
 /**
  * @desc 使用 cityId 获取热门电影列表
  * @param cityId {String}
  * @return {Array}
  */
-async function movies(cityId) {
+const movies = async function movies(cityId) {
   //region 获取各个网站对就的 cityCode
   const movieDb = new MovieDb();
   const city = await movieDb.findById('cities', cityId);
@@ -98,7 +98,7 @@ async function movies(cityId) {
     });
   return _remove(movies, movie => movie.link.taobaoLink);
   //endregion
-}
+};
 
 module.exports = {
   cities,

@@ -11,7 +11,7 @@ const host = 'http://dianying.taobao.com';
 /**
  * @return {Promise.<Object>}
  */
-function getCityList() {
+const getCityList = function getCityList() {
   const timeStampStr = Date.now().toString();
   return rq({
     uri: `${host}/cityAction.json`,
@@ -28,13 +28,13 @@ function getCityList() {
     .then(res =>
       //字段名：[{id,parentId,regionName,cityCode,pinYin}]
       JSON.parse(res.replace(/jsonp\d{2,3}\((.+)\);$/, '$1'))['returnValue']);
-}
+};
 
 /**
  * @param city {number}
  * @return {Promise.<Array>}
  */
-function getHotMovieList(city = 440300) {
+const getHotMovieList = function getHotMovieList(city = 440300) {
   return rq({
     uri: `${host}/showList.htm`,
     method: 'GET',
@@ -84,7 +84,7 @@ function getHotMovieList(city = 440300) {
         })
     )
     .catch(e => cliLog.error(e));
-}
+};
 
 /**
  * 获取区域，影院，排期等信息
@@ -96,37 +96,37 @@ function getHotMovieList(city = 440300) {
  * @param date {Date} 日期
  * @return {Promise.<Object>}
  */
-function getDetail({ taobaoCityId, cityName, taobaoMovieId, regionName, cinemaId, date }) {
+const getDetail = function getDetail({ taobaoCityId, cityName, taobaoMovieId, regionName, cinemaId, date }) {
 
   /**
    * 获取当前城市的区域信息
    * @param htmlStr {Element}
    * @return {Array}
    */
-  function getAreas(htmlStr) {
+  const getAreas = function getAreas(htmlStr) {
     const $ = cheerio.load(htmlStr);
     return $('a').toArray().map(area => $(area).text());
-  }
+  };
 
   /**
    * 获取影院信息
    * @param htmlStr {Element}
    * @returns {Array}
    */
-  function getCinemas(htmlStr) {
+  const getCinemas = function getCinemas(htmlStr) {
     const $ = cheerio.load(htmlStr);
     return $('a').toArray().map(cinema => ({
       taobaoCinemaId: $(cinema).data('param').replace(/.*cinemaId=([0-9]*)&.*/, '$1'),
       name: $(cinema).text(),
     }))
-  }
+  };
 
   /**
    * 电影排期
    * @param $ {Function}
    * @return {Object}
    */
-  function getSchedules($) {
+  const getSchedules = function getSchedules($) {
     return $('.hall-table')
       .find('tbody')
       .find('tr')
@@ -143,7 +143,7 @@ function getDetail({ taobaoCityId, cityName, taobaoMovieId, regionName, cinemaId
         price: $(schedule).find('.hall-price').find('em').text(),
         buyLink: $(schedule).find('.seat-btn').attr('href'),
       }));
-  }
+  };
 
   const j = rq.jar();
   const uri = `${host}/showDetailSchedule.htm`;
@@ -189,7 +189,7 @@ function getDetail({ taobaoCityId, cityName, taobaoMovieId, regionName, cinemaId
       return { areas, cinemas, schedules, current };
     })
     .catch(e => cliLog.error(e));
-}
+};
 
 
 (async() => {

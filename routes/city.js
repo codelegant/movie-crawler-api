@@ -8,7 +8,7 @@ const MovieDb = require('../db/MovieDb');
 /**
  * @desc 直接从数据库获取城市列表
  */
-async function getFromDb(req, res, next) {
+const getFromDb = async function getFromDb(req, res, next) {
   try {
     const { regionName } = req.query;
     if (regionName) return next('regionName');
@@ -21,12 +21,12 @@ async function getFromDb(req, res, next) {
     cliLog.error(e);
     return next(new restify.InternalServerError('获取城市列表失败'));
   }
-}
+};
 
 /**
  * @desc 先爬取城市列表，然后存入数据库
  */
-async function getFromCawler(req, res, next) {
+const getFromCawler = async function getFromCawler(req, res, next) {
   try {
     const citiesArr = await cawler.cities();
     const movieDb = new MovieDb();
@@ -38,12 +38,12 @@ async function getFromCawler(req, res, next) {
     cliLog.error(e);
     return next(new restify.InternalServerError('获取城市列表失败'));
   }
-}
+};
 
 /**
  * @desc 使用 regionName 字段查询城市数据
  */
-async function getByRegionNameFromDb(req, res, next) {
+const getByRegionNameFromDb = async function getByRegionNameFromDb(req, res, next) {
   try {
     const { regionName } = req.query;
     if (! regionName) {
@@ -57,12 +57,12 @@ async function getByRegionNameFromDb(req, res, next) {
     cliLog.error(e);
     return next(new restify.InternalServerError('获取城市信息失败'));
   }
-}
+};
 
 /**
  * @desc 数据为空，重新抓取，存储，查找 regionName
  */
-async function getByRegionNameFromCawler(req, res, next) {
+const getByRegionNameFromCawler = async function getByRegionNameFromCawler(req, res, next) {
   try {
     const { regionName } = req.query;
     if (! regionName) {
@@ -88,12 +88,12 @@ async function getByRegionNameFromCawler(req, res, next) {
     cliLog.error(e);
     return next(new restify.InternalServerError('获取城市信息失败'));
   }
-}
+};
 
 /**
  * @desc 重新爬取城市列表信息，并存入数据库
  */
-async function put(req, res, next) {
+const put = async function put(req, res, next) {
   try {
     const movieDb = new MovieDb();
     await movieDb.deleteMany('cities', false);
@@ -108,7 +108,7 @@ async function put(req, res, next) {
     cliLog.error(e);
     return next(new restify.InternalServerError('更新城市列表失败'));
   }
-}
+};
 
 module.exports = {
   getFromDb,

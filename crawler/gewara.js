@@ -10,7 +10,7 @@ const headers = {
  * @param cityCode {Number}
  * @return {Promise.<Array>}
  */
-function getHotMovieList(cityCode = 440300) {
+const getHotMovieList = function getHotMovieList(cityCode = 440300) {
   const j = rq.jar();
   const uri = 'http://www.gewara.com/movie/searchMovie.xhtml';
   const cookie = rq.cookie(`citycode=${cityCode}`);//设置城市 cookie，深圳
@@ -55,7 +55,7 @@ function getHotMovieList(cityCode = 440300) {
       })
       .filter(ele => ! ! ele);
   })();
-}
+};
 
 (async() => {
   const list = await getHotMovieList();

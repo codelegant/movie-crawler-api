@@ -12,7 +12,7 @@ const headers = {
 /**
  * @return {Promise.<Array>}
  */
-function getCityList() {
+const getCityList = function getCityList() {
   let sitePage = null;
   let phInstance = null;
 
@@ -50,13 +50,13 @@ function getCityList() {
       return cityList;
     })
     .catch(e => cliLog.error(e));
-}
+};
 
 /**
  * @param cityCode {Number}
  * @return {Promise.<Object>}
  */
-function getHotMovieList(cityCode = 30) {
+const getHotMovieList = function getHotMovieList(cityCode = 30) {
   const j = rq.jar();
   const uri = 'http://maoyan.com/films';
   const cookie = rq.cookie(`ci=${cityCode}`);//设置城市 cookie ，深圳
@@ -104,7 +104,7 @@ function getHotMovieList(cityCode = 30) {
         }
       });
   })();
-}
+};
 
 module.exports = {
   getCityList,

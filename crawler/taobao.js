@@ -11,7 +11,7 @@ const host = 'http://dianying.taobao.com';
 /**
  * @return {Promise.<Object>}
  */
-const getCityList = function getCityList() {
+const getCityList = () => {
   const timeStampStr = Date.now().toString();
   return rq({
     uri: `${host}/cityAction.json`,
@@ -34,7 +34,7 @@ const getCityList = function getCityList() {
  * @param city {number}
  * @return {Promise.<Array>}
  */
-const getHotMovieList = function getHotMovieList(city = 440300) {
+const getHotMovieList = (city = 440300) => {
   return rq({
     uri: `${host}/showList.htm`,
     method: 'GET',
@@ -96,14 +96,14 @@ const getHotMovieList = function getHotMovieList(city = 440300) {
  * @param date {Date} 日期
  * @return {Promise.<Object>}
  */
-const getDetail = function getDetail({ taobaoCityId, cityName, taobaoMovieId, regionName, cinemaId, date }) {
+const getDetail = ({ taobaoCityId, cityName, taobaoMovieId, regionName, cinemaId, date }) => {
 
   /**
    * 获取当前城市的区域信息
    * @param htmlStr {Element}
    * @return {Array}
    */
-  const getAreas = function getAreas(htmlStr) {
+  const getAreas = htmlStr => {
     const $ = cheerio.load(htmlStr);
     return $('a').toArray().map(area => $(area).text());
   };
@@ -113,7 +113,7 @@ const getDetail = function getDetail({ taobaoCityId, cityName, taobaoMovieId, re
    * @param htmlStr {Element}
    * @returns {Array}
    */
-  const getCinemas = function getCinemas(htmlStr) {
+  const getCinemas = htmlStr => {
     const $ = cheerio.load(htmlStr);
     return $('a').toArray().map(cinema => ({
       taobaoCinemaId: $(cinema).data('param').replace(/.*cinemaId=([0-9]*)&.*/, '$1'),
@@ -126,7 +126,7 @@ const getDetail = function getDetail({ taobaoCityId, cityName, taobaoMovieId, re
    * @param $ {Function}
    * @return {Object}
    */
-  const getSchedules = function getSchedules($) {
+  const getSchedules = $ => {
     return $('.hall-table')
       .find('tbody')
       .find('tr')

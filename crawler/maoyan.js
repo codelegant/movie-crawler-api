@@ -12,7 +12,7 @@ const headers = {
 /**
  * @return {Promise.<Array>}
  */
-const getCityList = function getCityList() {
+const getCityList = () => {
   let sitePage = null;
   let phInstance = null;
 
@@ -56,13 +56,13 @@ const getCityList = function getCityList() {
  * @param cityCode {Number}
  * @return {Promise.<Object>}
  */
-const getHotMovieList = function getHotMovieList(cityCode = 30) {
+const getHotMovieList = (cityCode = 30) => {
   const j = rq.jar();
   const uri = 'http://maoyan.com/films';
   const cookie = rq.cookie(`ci=${cityCode}`);//设置城市 cookie ，深圳
   j.setCookie(cookie, uri);
 
-  function getOnePageList(offset = 0) {
+  const getOnePageList = (offset = 0) => {
     return rq({
       uri,
       jar: j,
@@ -71,7 +71,7 @@ const getHotMovieList = function getHotMovieList(cityCode = 30) {
     })
       .then(htmlString => htmlString)
       .catch(e => cliLog.error(e));
-  }
+  };
 
   return (async() => {
     let $ = cheerio.load(await getOnePageList());

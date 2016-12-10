@@ -18,7 +18,7 @@ const cliLog = require('../libs/cliLog');
  * @param type {String<'arr'|'obj'>}
  * @return {Object|Array}
  */
-const cities = async function cities(type = 'arr') {
+const cities = async(type = 'arr') => {
   const cityLists = await Promise.all([
                                    taobao.getCityList(),
                                    maoyan.getCityList(),
@@ -73,7 +73,7 @@ const cities = async function cities(type = 'arr') {
  * @param cityId {String}
  * @return {Array}
  */
-const movies = async function movies(cityId) {
+const movies = async cityId => {
   //region 获取各个网站对就的 cityCode
   const movieDb = new MovieDb();
   const city = await movieDb.findById('cities', cityId);

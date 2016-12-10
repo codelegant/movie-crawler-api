@@ -8,7 +8,7 @@ const MovieDb = require('../db/MovieDb');
 /**
  * @desc 使用 cityId 从数据库中读取热门电影列表
  */
-const getByCityIdFromDb = async function getByCityIdFromDb(req, res, next) {
+const getByCityIdFromDb = async(req, res, next) => {
   try {
     const { cityId } = req.query;
     if (! cityId) {
@@ -36,7 +36,7 @@ const getByCityIdFromDb = async function getByCityIdFromDb(req, res, next) {
 /**
  * @desc 使用 cityId 从爬虫中读取热门电影列表
  */
-const getByCityIdFromCawler = async function getByCityIdFromCawler(req, res, next) {
+const getByCityIdFromCawler = async(req, res, next) => {
   try {
     const { cityId } = req.query;
     if (! cityId) {
@@ -85,7 +85,7 @@ const getByCityIdFromCawler = async function getByCityIdFromCawler(req, res, nex
 /**
  * @desc 使用 id 获取电影详情
  */
-const getById = async function getById(req, res, next) {
+const getById = async(req, res, next) => {
   try {
     const { id } = req.query;
     if (! id) return next(new restify.NotFoundError('未查询到电影信息'));
@@ -104,7 +104,7 @@ const getById = async function getById(req, res, next) {
 /**
  * @desc 使用 cityId 重新抓取热门电影并存储
  */
-const put = async function put(req, res, next) {
+const put = async(req, res, next) => {
   try {
     const { cityId } = req.query;
     if (! cityId) {

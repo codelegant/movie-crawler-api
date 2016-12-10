@@ -8,7 +8,7 @@ const MovieDb = require('../db/MovieDb');
 /**
  * @desc 直接从数据库获取城市列表
  */
-const getFromDb = async function getFromDb(req, res, next) {
+const getFromDb = async(req, res, next) => {
   try {
     const { regionName } = req.query;
     if (regionName) return next('regionName');
@@ -26,7 +26,7 @@ const getFromDb = async function getFromDb(req, res, next) {
 /**
  * @desc 先爬取城市列表，然后存入数据库
  */
-const getFromCawler = async function getFromCawler(req, res, next) {
+const getFromCawler = async(req, res, next) => {
   try {
     const citiesArr = await cawler.cities();
     const movieDb = new MovieDb();
@@ -43,7 +43,7 @@ const getFromCawler = async function getFromCawler(req, res, next) {
 /**
  * @desc 使用 regionName 字段查询城市数据
  */
-const getByRegionNameFromDb = async function getByRegionNameFromDb(req, res, next) {
+const getByRegionNameFromDb = async(req, res, next) => {
   try {
     const { regionName } = req.query;
     if (! regionName) {
@@ -62,7 +62,7 @@ const getByRegionNameFromDb = async function getByRegionNameFromDb(req, res, nex
 /**
  * @desc 数据为空，重新抓取，存储，查找 regionName
  */
-const getByRegionNameFromCawler = async function getByRegionNameFromCawler(req, res, next) {
+const getByRegionNameFromCawler = async(req, res, next) => {
   try {
     const { regionName } = req.query;
     if (! regionName) {
@@ -93,7 +93,7 @@ const getByRegionNameFromCawler = async function getByRegionNameFromCawler(req, 
 /**
  * @desc 重新爬取城市列表信息，并存入数据库
  */
-const put = async function put(req, res, next) {
+const put = async(req, res, next) => {
   try {
     const movieDb = new MovieDb();
     await movieDb.deleteMany('cities', false);

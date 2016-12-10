@@ -4,7 +4,7 @@ const MongoClient = require('mongodb').MongoClient;
 const cliLog = require('../libs/cliLog');
 
 /**
- * @class 数据库接口作类
+ * @class 数据库接口操作类
  */
 class MovieDb {
   constructor(url = 'mongodb://api:api@127.0.0.1:1000/movie?authMechanism=SCRAM-SHA-1') {

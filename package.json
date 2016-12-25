@@ -12,10 +12,7 @@
     "url": "git+https://github.com/codelegant/moive-crawler-api.git"
   },
   "keywords": [
-    "request",
-    "request-promise",
-    "cheerio",
-    "phantom"
+    "request","request-promise","cheerio","phantom"
   ],
   "author": "codelegant laichuanfeng@hotmail.com",
   "license": "MIT",

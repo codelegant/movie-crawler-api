@@ -106,6 +106,10 @@ const getHotMovieList = (cityCode = 30) => {
   })();
 };
 
+const getDetail = () => {
+};
+
+
 module.exports = {
   getCityList,
   getHotMovieList,

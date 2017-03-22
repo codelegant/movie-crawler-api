@@ -167,8 +167,8 @@ const getDetail = ({ taobaoCityId, cityName, taobaoMovieId, regionName, cinemaId
     transform: body => cheerio.load(body),
   })
     .then($ => {
-      const [areaObj,cinemasObj,datesObj]=$('.select-tags').toArray();
-      const [areas,cinemas,schedules]=[getAreas(areaObj), getCinemas(cinemasObj), getSchedules($)];
+      const [areaObj, cinemasObj, datesObj]=$('.select-tags').toArray();
+      const [areas, cinemas, schedules]=[getAreas(areaObj), getCinemas(cinemasObj), getSchedules($)];
       const current = {
         city: $(areaObj).find('a.current').text(),
 
@@ -196,7 +196,8 @@ const getDetail = ({ taobaoCityId, cityName, taobaoMovieId, regionName, cinemaId
   const test = await getDetail({
     taobaoCityId: 440300,
     cityName: '深圳',
-    taobaoMovieId: 178125
+    taobaoMovieId: 154578,
+    regionName: '龙岗区',
   });
   console.log(test);
   // console.log(await getHotMovieList(440300));

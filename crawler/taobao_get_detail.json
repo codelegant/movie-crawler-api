@@ -1,0 +1,716 @@
+{
+  "areas": ["全部区域","宝安区","福田区","龙岗区","龙华区","龙华新区","罗湖区","南山区","坪山新区","盐田区"],
+  "cinemas": [
+    {
+      "taobaoCinemaId": "4401",
+      "name": "深圳横店电影城"
+    },{
+      "taobaoCinemaId": "10046",
+      "name": "深圳嘉熙业国际影城"
+    },{
+      "taobaoCinemaId": "10039",
+      "name": "新华银兴国际影城（深圳店）"
+    },{
+      "taobaoCinemaId": "4893",
+      "name": "大地影院深圳沙井裕客隆"
+    },{
+      "taobaoCinemaId": "36902",
+      "name": "深圳百线影城"
+    },{
+      "taobaoCinemaId": "9494",
+      "name": "深圳金逸国际影城建安店"
+    },{
+      "taobaoCinemaId": "17321",
+      "name": "大地影院深圳佐阾香颂影城"
+    },{
+      "taobaoCinemaId": "34954",
+      "name": "非凡数字影城"
+    },{
+      "taobaoCinemaId": "10021",
+      "name": "深圳金逸国际影城龙华店"
+    },{
+      "taobaoCinemaId": "26973",
+      "name": "云幕国际影院"
+    },{
+      "taobaoCinemaId": "36086",
+      "name": "百川国际影城（民治优城店）"
+    },{
+      "taobaoCinemaId": "16823",
+      "name": "中影飞尚百誉国际影城"
+    },{
+      "taobaoCinemaId": "6281",
+      "name": "中影国际影城深圳宝安港隆城店"
+    },{
+      "taobaoCinemaId": "29428",
+      "name": "德信影城深圳沙井联诚店（原东影南国影城）"
+    },{
+      "taobaoCinemaId": "38197",
+      "name": "宝影国际影城（公明店）"
+    },{
+      "taobaoCinemaId": "28836",
+      "name": "中影ul城市影院宝安店"
+    },{
+      "taobaoCinemaId": "38181",
+      "name": "米高梅影城（田寮店）"
+    },{
+      "taobaoCinemaId": "37942",
+      "name": "百誉影城公明店"
+    },{
+      "taobaoCinemaId": "10094",
+      "name": "深圳金逸国际影城民治店"
+    },{
+      "taobaoCinemaId": "37941",
+      "name": "百誉影城上域店"
+    },{
+      "taobaoCinemaId": "36240",
+      "name": "集鸿发中影国际影城（田寮店）"
+    },{
+      "taobaoCinemaId": "10080",
+      "name": "中影ul城市影院福永店"
+    },{
+      "taobaoCinemaId": "37460",
+      "name": "深圳星晨国际影城（松岗店）"
+    },{
+      "taobaoCinemaId": "26904",
+      "name": "深圳东海国际影城"
+    },{
+      "taobaoCinemaId": "38169",
+      "name": "百川影城IMAX新沙天虹店"
+    },{
+      "taobaoCinemaId": "9313",
+      "name": "深圳金逸国际影城沙井店"
+    },{
+      "taobaoCinemaId": "24104",
+      "name": "深圳东影南国国际影城（唐美店）"
+    },{
+      "taobaoCinemaId": "36013",
+      "name": "凤凰国际影城西乡店"
+    },{
+      "taobaoCinemaId": "31004",
+      "name": "中影星趴影城"
+    },{
+      "taobaoCinemaId": "29604",
+      "name": "中影德金影城福永店"
+    },{
+      "taobaoCinemaId": "36469",
+      "name": "深圳宝影影城"
+    },{
+      "taobaoCinemaId": "29048",
+      "name": "中影DY国际影城（沙井店）"
+    },{
+      "taobaoCinemaId": "9626",
+      "name": "深圳中影星美国际影城"
+    },{
+      "taobaoCinemaId": "34838",
+      "name": "中影德金影城西乡店"
+    },{
+      "taobaoCinemaId": "37526",
+      "name": "深圳中影星悦影城影城"
+    },{
+      "taobaoCinemaId": "9606",
+      "name": "大地影院深圳宝安时代城"
+    },{
+      "taobaoCinemaId": "5001",
+      "name": "深圳17.5影城沙井店"
+    },{
+      "taobaoCinemaId": "32664",
+      "name": "万厅国际影城公明店"
+    },{
+      "taobaoCinemaId": "36188",
+      "name": "橙天嘉禾影城（中洲店）"
+    },{
+      "taobaoCinemaId": "33166",
+      "name": "中影ul城市影院黄田店"
+    },{
+      "taobaoCinemaId": "37531",
+      "name": "中影美视国际影城（4K 沉浸音）"
+    },{
+      "taobaoCinemaId": "32673",
+      "name": "深圳幕森影城福永店"
+    },{
+      "taobaoCinemaId": "32682",
+      "name": "中影100都市影城彩虹城店"
+    },{
+      "taobaoCinemaId": "9867",
+      "name": "大地影院深圳观澜店"
+    },{
+      "taobaoCinemaId": "18608",
+      "name": "深圳光明正佳影院"
+    },{
+      "taobaoCinemaId": "18609",
+      "name": "环星电影院（新安店）"
+    },{
+      "taobaoCinemaId": "9878",
+      "name": "大地影院深圳宝安宏发大世界"
+    },{
+      "taobaoCinemaId": "20743",
+      "name": "星美国际影城深圳福永店"
+    },{
+      "taobaoCinemaId": "29541",
+      "name": "华夏星光国际影城沙井店"
+    },{
+      "taobaoCinemaId": "18605",
+      "name": "中影ul城市影院乐尚店"
+    },{
+      "taobaoCinemaId": "19684",
+      "name": "中影国际影城深圳龙华九方店"
+    },{
+      "taobaoCinemaId": "9403",
+      "name": "深圳金逸国际影城观澜店"
+    },{
+      "taobaoCinemaId": "35601",
+      "name": "集鸿发中影国际影城（后亭店）"
+    },{
+      "taobaoCinemaId": "9686",
+      "name": "深圳金逸国际影城碧海城店"
+    },{
+      "taobaoCinemaId": "33790",
+      "name": "中影UL城市影院宝立方店"
+    },{
+      "taobaoCinemaId": "4580",
+      "name": "深圳中影雅图城市影院龙华店"
+    },{
+      "taobaoCinemaId": "33535",
+      "name": "中影影派影城（长圳店）"
+    },{
+      "taobaoCinemaId": "33224",
+      "name": "万厅国际影城石岩店"
+    },{
+      "taobaoCinemaId": "21512",
+      "name": "深圳博纳国际影城龙华店"
+    },{
+      "taobaoCinemaId": "38021",
+      "name": "深影华纳影城（翻身店）"
+    },{
+      "taobaoCinemaId": "37887",
+      "name": "时代凤凰国际影城（松岗店）"
+    },{
+      "taobaoCinemaId": "15709",
+      "name": "中影德金影城和平店"
+    },{
+      "taobaoCinemaId": "9699",
+      "name": "深圳万达电影城海雅店"
+    },{
+      "taobaoCinemaId": "15706",
+      "name": "深圳嘉乐影城固戍店"
+    },{
+      "taobaoCinemaId": "36366",
+      "name": "中影ul城市影院万荟城店（巨幕）"
+    },{
+      "taobaoCinemaId": "15703",
+      "name": "中影星河电影城松岗店"
+    },{
+      "taobaoCinemaId": "31318",
+      "name": "中影百汇国际影城（红岭店）"
+    },{
+      "taobaoCinemaId": "33037",
+      "name": "星美国际影商城-福田体育公园店"
+    },{
+      "taobaoCinemaId": "9244",
+      "name": "深圳金逸国际影城中心城店"
+    },{
+      "taobaoCinemaId": "13360",
+      "name": "深圳保利国际影城-大中华店"
+    },{
+      "taobaoCinemaId": "4398",
+      "name": "深圳中影今典影城"
+    },{
+      "taobaoCinemaId": "4381",
+      "name": "深圳百老汇影城cocopark店"
+    },{
+      "taobaoCinemaId": "4958",
+      "name": "深圳嘉之华中心影城"
+    },{
+      "taobaoCinemaId": "33105",
+      "name": "深圳市百花金奖影城"
+    },{
+      "taobaoCinemaId": "12808",
+      "name": "万众国际影城（NEO店）"
+    },{
+      "taobaoCinemaId": "36271",
+      "name": "橙天嘉禾影城（卓悦汇店）"
+    },{
+      "taobaoCinemaId": "14474",
+      "name": "深圳博纳国际影城皇庭店"
+    },{
+      "taobaoCinemaId": "28827",
+      "name": "中影ul城市影院彩田店"
+    },{
+      "taobaoCinemaId": "5929",
+      "name": "深圳雅图数字影院（梅林店）"
+    },{
+      "taobaoCinemaId": "30994",
+      "name": "卢米埃深圳华强北九方IMAX影城"
+    },{
+      "taobaoCinemaId": "36691",
+      "name": "中影星联影城（园岭店）"
+    },{
+      "taobaoCinemaId": "36427",
+      "name": "星汇电影城（东海缤纷天地店）"
+    },{
+      "taobaoCinemaId": "25676",
+      "name": "纵横国际影城（石厦店）"
+    },{
+      "taobaoCinemaId": "4592",
+      "name": "太平洋影城（深圳东海店）"
+    },{
+      "taobaoCinemaId": "34738",
+      "name": "星美国际影商城（京基IMAX店）"
+    },{
+      "taobaoCinemaId": "6028",
+      "name": "中影世纪星晖影城"
+    },{
+      "taobaoCinemaId": "4295",
+      "name": "深圳博纳国际影城华强店"
+    },{
+      "taobaoCinemaId": "15704",
+      "name": "中影国际影城福田中信广场店（新南国店）"
+    },{
+      "taobaoCinemaId": "15298",
+      "name": "深圳盛达国际影城"
+    },{
+      "taobaoCinemaId": "5712",
+      "name": "深圳金域世纪电影城"
+    },{
+      "taobaoCinemaId": "29410",
+      "name": "华夏君盛影城平湖店"
+    },{
+      "taobaoCinemaId": "23897",
+      "name": "深圳中影博亚影城五和店"
+    },{
+      "taobaoCinemaId": "9994",
+      "name": "太平洋影城（深圳新城汇店）"
+    },{
+      "taobaoCinemaId": "9752",
+      "name": "深圳星烨南岭国际影城"
+    },{
+      "taobaoCinemaId": "17898",
+      "name": "深圳星美国际影城龙岗万科店"
+    },{
+      "taobaoCinemaId": "31490",
+      "name": "橙天嘉禾影城（摩尔城店）"
+    },{
+      "taobaoCinemaId": "28841",
+      "name": "中影ul城市影院三联店"
+    },{
+      "taobaoCinemaId": "9557",
+      "name": "深圳嘉年华国际影城"
+    },{
+      "taobaoCinemaId": "28838",
+      "name": "中影ul城市影院君盛店"
+    },{
+      "taobaoCinemaId": "28839",
+      "name": "中影ul城市影院昌宏店"
+    },{
+      "taobaoCinemaId": "28835",
+      "name": "中影ul城市影院横岗店"
+    },{
+      "taobaoCinemaId": "36511",
+      "name": "天誉国际影城（樟树布店）"
+    },{
+      "taobaoCinemaId": "29371",
+      "name": "万众国际影城（横岗店）"
+    },{
+      "taobaoCinemaId": "37189",
+      "name": "深圳华夏君盛影城坪地店"
+    },{
+      "taobaoCinemaId": "30967",
+      "name": "纵横国际影城ZMAX巨幕（天安云谷店）"
+    },{
+      "taobaoCinemaId": "38137",
+      "name": "佳兆业国际影城布吉店"
+    },{
+      "taobaoCinemaId": "16899",
+      "name": "米高梅国际影城（横岗店）"
+    },{
+      "taobaoCinemaId": "9384",
+      "name": "深圳博纳国际影城龙岗店"
+    },{
+      "taobaoCinemaId": "27348",
+      "name": "华夏太古国际影城（龙盛店）"
+    },{
+      "taobaoCinemaId": "18610",
+      "name": "深圳达梦国际影城"
+    },{
+      "taobaoCinemaId": "5575",
+      "name": "南国艺恒国际影城坂田店"
+    },{
+      "taobaoCinemaId": "34765",
+      "name": "中影百川影城（布吉店）"
+    },{
+      "taobaoCinemaId": "30908",
+      "name": "ZCV布吉影城"
+    },{
+      "taobaoCinemaId": "25675",
+      "name": "深圳中影易禾影城"
+    },{
+      "taobaoCinemaId": "9682",
+      "name": "华夏太古国际影城（万科红店）"
+    },{
+      "taobaoCinemaId": "27564",
+      "name": "中影南方影城布吉店"
+    },{
+      "taobaoCinemaId": "9963",
+      "name": "深圳时代金球影城"
+    },{
+      "taobaoCinemaId": "9695",
+      "name": "深圳一帆影城"
+    },{
+      "taobaoCinemaId": "35156",
+      "name": "深圳宝能影城（龙岗店）"
+    },{
+      "taobaoCinemaId": "4296",
+      "name": "百誉影城龙岗店"
+    },{
+      "taobaoCinemaId": "21513",
+      "name": "深圳百汇银河影城"
+    },{
+      "taobaoCinemaId": "21515",
+      "name": "深圳中影百汇影城（南岭店）"
+    },{
+      "taobaoCinemaId": "37068",
+      "name": "深圳华夏le影城"
+    },{
+      "taobaoCinemaId": "21511",
+      "name": "深圳聚星国际影城（华南第一巨幕店）"
+    },{
+      "taobaoCinemaId": "34931",
+      "name": "橙天国际影城（平湖店）"
+    },{
+      "taobaoCinemaId": "29479",
+      "name": "中影ul城市影院坪地店"
+    },{
+      "taobaoCinemaId": "29415",
+      "name": "华夏国际影城观澜店"
+    },{
+      "taobaoCinemaId": "30937",
+      "name": "橙天嘉禾影城（观澜湖店）"
+    },{
+      "taobaoCinemaId": "30916",
+      "name": "华纳万都影院龙华店"
+    },{
+      "taobaoCinemaId": "36604",
+      "name": "中影熙腾影城（龙华店）"
+    },{
+      "taobaoCinemaId": "32768",
+      "name": "中影熙腾影院（观澜店）"
+    },{
+      "taobaoCinemaId": "31310",
+      "name": "深圳金逸新新影城"
+    },{
+      "taobaoCinemaId": "35718",
+      "name": "中影4K国际影城民治店"
+    },{
+      "taobaoCinemaId": "33106",
+      "name": "橙天欢乐影城（大浪店）"
+    },{
+      "taobaoCinemaId": "31514",
+      "name": "希恩国际影城（观澜巨幕店）"
+    },{
+      "taobaoCinemaId": "29572",
+      "name": "中影博亚影城民治店"
+    },{
+      "taobaoCinemaId": "5950",
+      "name": "华夏太古国际影城（龙华金銮店）"
+    },{
+      "taobaoCinemaId": "25833",
+      "name": "中影时空国际影城"
+    },{
+      "taobaoCinemaId": "21482",
+      "name": "太平洋影城（深圳八号仓店）"
+    },{
+      "taobaoCinemaId": "34549",
+      "name": "中影南方影城观澜店"
+    },{
+      "taobaoCinemaId": "31460",
+      "name": "环球影城观澜店"
+    },{
+      "taobaoCinemaId": "22750",
+      "name": "华夏太古国际影城（弓村巨幕店）"
+    },{
+      "taobaoCinemaId": "38022",
+      "name": "深影华纳影城(民乐店)"
+    },{
+      "taobaoCinemaId": "36358",
+      "name": "深圳新耀客国际影城"
+    },{
+      "taobaoCinemaId": "4306",
+      "name": "百誉影城大浪店"
+    },{
+      "taobaoCinemaId": "33585",
+      "name": "深圳红石影城(东门店)"
+    },{
+      "taobaoCinemaId": "4637",
+      "name": "深圳戏院影城"
+    },{
+      "taobaoCinemaId": "35456",
+      "name": "百誉影城（钻石店）"
+    },{
+      "taobaoCinemaId": "7912",
+      "name": "深影凤凰国际影院"
+    },{
+      "taobaoCinemaId": "23895",
+      "name": "深圳UA影城"
+    },{
+      "taobaoCinemaId": "28840",
+      "name": "中影ul城市影院布心店"
+    },{
+      "taobaoCinemaId": "33804",
+      "name": "嘉乐国际影城（鸿翔店）"
+    },{
+      "taobaoCinemaId": "13921",
+      "name": "百誉影城东门店"
+    },{
+      "taobaoCinemaId": "8107",
+      "name": "橙天嘉禾影城（万象城店）"
+    },{
+      "taobaoCinemaId": "5015",
+      "name": "深圳MCL洲立影城（喜荟城中心）"
+    },{
+      "taobaoCinemaId": "5858",
+      "name": "南国影城金光华店"
+    },{
+      "taobaoCinemaId": "18606",
+      "name": "中影ul城市影院莲塘店"
+    },{
+      "taobaoCinemaId": "4304",
+      "name": "太阳数码影城"
+    },{
+      "taobaoCinemaId": "36632",
+      "name": "百誉影城（草埔店）"
+    },{
+      "taobaoCinemaId": "9492",
+      "name": "深圳华夏星光国际影城"
+    },{
+      "taobaoCinemaId": "35247",
+      "name": "中影4KMAX国际影城（西丽店）"
+    },{
+      "taobaoCinemaId": "9291",
+      "name": "中影UL城市影院西丽店"
+    },{
+      "taobaoCinemaId": "28843",
+      "name": "中影ul城市影院龙珠店"
+    },{
+      "taobaoCinemaId": "28837",
+      "name": "中影ul城市影院前海店"
+    },{
+      "taobaoCinemaId": "34584",
+      "name": "中影南方影城深大店"
+    },{
+      "taobaoCinemaId": "35079",
+      "name": "深圳蛇口影剧院"
+    },{
+      "taobaoCinemaId": "18568",
+      "name": "百川国际影城（南山店）"
+    },{
+      "taobaoCinemaId": "8019",
+      "name": "华谊兄弟影院深圳太古城店"
+    },{
+      "taobaoCinemaId": "18567",
+      "name": "华夏君盛影城"
+    },{
+      "taobaoCinemaId": "5854",
+      "name": "中影国际影城深圳南山欢乐海岸店"
+    },{
+      "taobaoCinemaId": "16905",
+      "name": "华影信和影城"
+    },{
+      "taobaoCinemaId": "38100",
+      "name": "中影星趴影院海上世界店"
+    },{
+      "taobaoCinemaId": "37566",
+      "name": "中影德金影城南山店"
+    },{
+      "taobaoCinemaId": "6042",
+      "name": "保利国际影城深圳南山店"
+    },{
+      "taobaoCinemaId": "4345",
+      "name": "深圳海岸影城"
+    },{
+      "taobaoCinemaId": "4581",
+      "name": "华夏艺术中心数码影院"
+    },{
+      "taobaoCinemaId": "4576",
+      "name": "太平洋影城（深圳天利名城店）"
+    },{
+      "taobaoCinemaId": "4579",
+      "name": "太平洋影城（深圳京基百纳店）"
+    },{
+      "taobaoCinemaId": "4300",
+      "name": "中影国际影城深圳益田假日广场店"
+    },{
+      "taobaoCinemaId": "9460",
+      "name": "汉鼎宇佑影城（星海名城店）"
+    },{
+      "taobaoCinemaId": "15707",
+      "name": "深圳MCL洲立影城（花园城中心）"
+    },{
+      "taobaoCinemaId": "36596",
+      "name": "橙天国际影城（坪山店）"
+    },{
+      "taobaoCinemaId": "28842",
+      "name": "中影ul城市影院坪山店"
+    },{
+      "taobaoCinemaId": "10354",
+      "name": "深圳星际银河影城坪山店"
+    },{
+      "taobaoCinemaId": "27070",
+      "name": "深圳星际银河影城坑梓店"
+    },{
+      "taobaoCinemaId": "31331",
+      "name": "深圳时代凤凰影城（盐田店）"
+    },{
+      "taobaoCinemaId": "29756",
+      "name": "冷杉欢腾影城"
+    }
+  ],
+  "schedules": [
+    {
+      "startTime": "11:05",
+      "endTime": "13:13",
+      "type": "粤语 2D",
+      "name": "3号厅",
+      "price": "38.00",
+      "buyLink": "http://dianying.taobao.com/seatOrder.htm?scheduleId=354571234&n_s=new"
+    },{
+      "startTime": "12:25",
+      "endTime": "14:33",
+      "type": "粤语 2D",
+      "name": "7号厅",
+      "price": "38.00",
+      "buyLink": "http://dianying.taobao.com/seatOrder.htm?scheduleId=356070091&n_s=new"
+    },{
+      "startTime": "13:30",
+      "endTime": "15:38",
+      "type": "粤语 2D",
+      "name": "3号厅",
+      "price": "38.00",
+      "buyLink": "http://dianying.taobao.com/seatOrder.htm?scheduleId=354571235&n_s=new"
+    },{
+      "startTime": "14:10",
+      "endTime": "16:18",
+      "type": "粤语 2D",
+      "name": "4号激光厅",
+      "price": "38.00",
+      "buyLink": "http://dianying.taobao.com/seatOrder.htm?scheduleId=355719899&n_s=new"
+    },{
+      "startTime": "14:50",
+      "endTime": "16:58",
+      "type": "粤语 2D",
+      "name": "7号厅",
+      "price": "38.00",
+      "buyLink": "http://dianying.taobao.com/seatOrder.htm?scheduleId=356070095&n_s=new"
+    },{
+      "startTime": "15:20",
+      "endTime": "17:28",
+      "type": "粤语 2D",
+      "name": "1号厅",
+      "price": "38.00",
+      "buyLink": "http://dianying.taobao.com/seatOrder.htm?scheduleId=356070097&n_s=new"
+    },{
+      "startTime": "15:55",
+      "endTime": "18:03",
+      "type": "粤语 2D",
+      "name": "3号厅",
+      "price": "38.00",
+      "buyLink": "http://dianying.taobao.com/seatOrder.htm?scheduleId=354571236&n_s=new"
+    },{
+      "startTime": "16:35",
+      "endTime": "18:43",
+      "type": "粤语 2D",
+      "name": "4号激光厅",
+      "price": "38.00",
+      "buyLink": "http://dianying.taobao.com/seatOrder.htm?scheduleId=355719900&n_s=new"
+    },{
+      "startTime": "17:15",
+      "endTime": "19:23",
+      "type": "国语 2D",
+      "name": "7号厅",
+      "price": "38.00",
+      "buyLink": "http://dianying.taobao.com/seatOrder.htm?scheduleId=356070100&n_s=new"
+    },{
+      "startTime": "17:45",
+      "endTime": "19:53",
+      "type": "粤语 2D",
+      "name": "1号厅",
+      "price": "38.00",
+      "buyLink": "http://dianying.taobao.com/seatOrder.htm?scheduleId=356070101&n_s=new"
+    },{
+      "startTime": "18:20",
+      "endTime": "20:28",
+      "type": "粤语 2D",
+      "name": "3号厅",
+      "price": "38.00",
+      "buyLink": "http://dianying.taobao.com/seatOrder.htm?scheduleId=354571237&n_s=new"
+    },{
+      "startTime": "19:00",
+      "endTime": "21:08",
+      "type": "粤语 2D",
+      "name": "4号激光厅",
+      "price": "38.00",
+      "buyLink": "http://dianying.taobao.com/seatOrder.htm?scheduleId=355719901&n_s=new"
+    },{
+      "startTime": "19:40",
+      "endTime": "21:48",
+      "type": "粤语 2D",
+      "name": "7号厅",
+      "price": "38.00",
+      "buyLink": "http://dianying.taobao.com/seatOrder.htm?scheduleId=356070104&n_s=new"
+    },{
+      "startTime": "20:10",
+      "endTime": "22:18",
+      "type": "粤语 2D",
+      "name": "1号厅",
+      "price": "38.00",
+      "buyLink": "http://dianying.taobao.com/seatOrder.htm?scheduleId=356070105&n_s=new"
+    },{
+      "startTime": "20:45",
+      "endTime": "22:53",
+      "type": "粤语 2D",
+      "name": "3号厅",
+      "price": "38.00",
+      "buyLink": "http://dianying.taobao.com/seatOrder.htm?scheduleId=354571238&n_s=new"
+    },{
+      "startTime": "21:25",
+      "endTime": "23:33",
+      "type": "粤语 2D",
+      "name": "4号激光厅",
+      "price": "38.00",
+      "buyLink": "http://dianying.taobao.com/seatOrder.htm?scheduleId=355719902&n_s=new"
+    },{
+      "startTime": "22:00",
+      "endTime": "00:08",
+      "type": "粤语 2D",
+      "name": "7号厅",
+      "price": "38.00",
+      "buyLink": "http://dianying.taobao.com/seatOrder.htm?scheduleId=356070107&n_s=new"
+    },{
+      "startTime": "22:35",
+      "endTime": "00:43",
+      "type": "粤语 2D",
+      "name": "1号厅",
+      "price": "38.00",
+      "buyLink": "http://dianying.taobao.com/seatOrder.htm?scheduleId=356070108&n_s=new"
+    },{
+      "startTime": "23:10",
+      "endTime": "01:18",
+      "type": "粤语 2D",
+      "name": "3号厅",
+      "price": "38.00",
+      "buyLink": "http://dianying.taobao.com/seatOrder.htm?scheduleId=354571239&n_s=new"
+    },{
+      "startTime": "23:45",
+      "endTime": "01:53",
+      "type": "粤语 2D",
+      "name": "4号激光厅",
+      "price": "38.00",
+      "buyLink": "http://dianying.taobao.com/seatOrder.htm?scheduleId=355719903&n_s=new"
+    }
+  ],
+  "current": {
+    "city": "全部区域",
+    "cinema": "4401",
+    "date": "2016-12-25",
+    "address": "宝安区民治书香门第上河坊2栋2层近梅林关口"
+  }
+}

@@ -3,18 +3,17 @@ const debug = require('debug')('debug');
 
 const cawler = require('../crawler/index');
 const cliLog = require('../libs/cliLog');
-const MovieDb = require('../db/MovieDb');
+const City = require('../db/City');
 
 /**
- * @desc 直接从数据库获取城市列表
+ * 直接从数据库获取城市列表
  */
 const getFromDb = async(req, res, next) => {
   try {
     const { regionName } = req.query;
     if (regionName) return next('regionName');
-    const movieDb = new MovieDb();
-    const docs = await movieDb.findMany('cities');
 
+    const docs = await City.find();
     return docs.length ? res.json(200, docs) : next();
 
   } catch (e) {
@@ -24,15 +23,14 @@ const getFromDb = async(req, res, next) => {
 };
 
 /**
- * @desc 先爬取城市列表，然后存入数据库
+ * 先爬取城市列表，然后存入数据库
  */
 const getFromCawler = async(req, res, next) => {
   try {
-    const citiesArr = await cawler.cities();
-    const movieDb = new MovieDb();
-    const result = await movieDb.insert('cities', citiesArr);
-    return result.ops.length
-      ? res.json(200, result.ops)
+    const docs = await City.create(await cawler.cities());
+
+    return docs.length
+      ? res.json(200, docs)
       : next(new restify.NotFoundError('未查询到城市列表'));
   } catch (e) {
     cliLog.error(e);
@@ -46,12 +44,13 @@ const getFromCawler = async(req, res, next) => {
 const getByRegionNameFromDb = async(req, res, next) => {
   try {
     const { regionName } = req.query;
-    if (! regionName) {
+    if (!regionName) {
       return next(new restify.InvalidArgumentError('只接受 regionName 作为参数'));
     }
-    const movieDb = new MovieDb();
 
-    const docs = await movieDb.findMany('cities', true, { regionName });
+    const city = new City({ regionName });
+    const docs = await city.findByRegionName();
+
     return docs.length ? res.json(200, docs) : next();
   } catch (e) {
     cliLog.error(e);
@@ -60,27 +59,24 @@ const getByRegionNameFromDb = async(req, res, next) => {
 };
 
 /**
- * @desc 数据为空，重新抓取，存储，查找 regionName
+ * 数据为空，重新抓取，存储，查找 regionName
  */
 const getByRegionNameFromCawler = async(req, res, next) => {
   try {
     const { regionName } = req.query;
-    if (! regionName) {
+    if (!regionName) {
       return next(new restify.InvalidArgumentError('只接受 regionName 作为参数'));
     }
 
-    const citiesArr = await cawler.cities();
-    const movieDb = new MovieDb();
-    const result = await movieDb.insert('cities', citiesArr, false);
-    let docs = null;
-    for (const ele of result.ops) {
-      if (ele.regionName === regionName) {
-        docs = ele;
-        break;
-      }
+    const cities = await cawler.cities();
+    if (!(await City.create(cities)).length) {
+      return next(new restify.InternalServerError('获取城市信息失败'));
     }
 
-    return docs
+    const city = new City({ regionName });
+    const docs = await city.findByRegionName();
+
+    return docs.length
       ? res.json(200, docs)
       : next(new restify.NotFoundError(`查询 regionName:${regionName} 失败`));
 
@@ -91,19 +87,20 @@ const getByRegionNameFromCawler = async(req, res, next) => {
 };
 
 /**
- * @desc 重新爬取城市列表信息，并存入数据库
+ * 更新数据库
+ * 重新爬取城市列表信息，并存入数据库
  */
 const put = async(req, res, next) => {
   try {
-    const movieDb = new MovieDb();
-    await movieDb.deleteMany('cities', false);
-
-    const citiesArr = await cawler.cities();
+    const deleteResult = await City.deleteMany();
+    if (deleteResult.result.ok != 1) {
+      return next(new restify.InternalServerError('更新城市列表失败'));
+    }
 
     const cities = await cawler.cities();
-    const result = await movieDb.insert('cities', citiesArr);
+    const docs = await City.create(cities);
 
-    return res.send(result.ops.length ? 201 : 204);
+    return res.send(docs.length ? 201 : 204);
   } catch (e) {
     cliLog.error(e);
     return next(new restify.InternalServerError('更新城市列表失败'));

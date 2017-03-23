@@ -5,12 +5,9 @@
  */
 const mongoose = require('mongoose');
 const cliLog = require('../libs/cliLog');
+const connect = require('./connect')();
+const db_debug = require('debug')('db_debug');
 const Schema = mongoose.Schema;
-const db = mongoose.connection;
-
-// mongoose.connect('mongodb://api:api@127.0.0.1:1000/movie?authMechanism=SCRAM-SHA-1');
-db.open('mongodb://api:api@127.0.0.1:1000/movie?authMechanism=SCRAM-SHA-1');
-db.on('error', err => cliLog.error(`Connection Error: ${err}`));
 
 const citySchema = new Schema({
   regionName: String,
@@ -23,7 +20,8 @@ const citySchema = new Schema({
 });
 
 citySchema.methods.findByRegionName = function () {
-  return this.model('City').find({ regionName: new RegExp(this.regionName, 'i') })
+  return this.model('City')
+             .find({regionName: new RegExp(this.regionName, 'i')});
 };
 
 const City = mongoose.model('City', citySchema);

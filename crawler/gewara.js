@@ -10,58 +10,52 @@ const headers = {
  * @param cityCode {Number}
  * @return {Promise.<Array>}
  */
-const getHotMovieList = (cityCode = 440300) => {
+const getHotMovies = async (cityCode = 440300) => {
   const j = rq.jar();
   const uri = 'http://www.gewara.com/movie/searchMovie.xhtml';
   const cookie = rq.cookie(`citycode=${cityCode}`);//设置城市 cookie，深圳
   j.setCookie(cookie, uri);
-  const getOnePageList = (pageNo = 0) => rq({
-    uri,
-    jar: j,
-    headers,
-    qs: { pageNo }
-  })
-    .then(htmlString => htmlString)
-    .catch(e => cliLog.error(e));
-  return (async() => {
-    let pageNo = 0;
-    let $ = cheerio.load(await getOnePageList());
-    const listClassName = 'li.effectLi';
-    const movieEleArr = $(listClassName).toArray();
-    let movieEleLength = movieEleArr.length;
 
-    do {
-      $ = cheerio.load(await getOnePageList(pageNo += 1));
-      const currentPageArr = $(listClassName).toArray();
-      movieEleLength = currentPageArr.length;
-      Array.prototype.push.apply(movieEleArr, currentPageArr);
-    } while (movieEleLength);
+  const getOnePageList =
+    async (pageNo = 0) => await rq({
+      uri,
+      jar: j,
+      headers,
+      qs: {pageNo}
+    });
 
-    return movieEleArr
-      .map(movie => {
-        if (! $(movie).find('a.redBt').attr('href')) return null;
-        const name = $(movie).find('.ui_movieType').attr('title');
-        const gewaraLink = 'http://www.gewara.com'
-          + $(movie).find('a.redBt').attr('href');
-        return {
-          link: {
-            gewaraLink
-          }, //影片首页，同时也是购票链接
-          name, //名称,
-          movieId: {
-            gewaraId: gewaraLink.replace(/.*\/movie\/([0-9]*)/, '$1'),
-          }
-        };
-      })
-      .filter(ele => ! ! ele);
-  })();
+  let pageNo = 0;
+  let _$ = cheerio.load(await getOnePageList());
+  const listClassName = 'li.effectLi';
+  const movieEleArr = _$(listClassName).toArray();
+  let movieEleLength = movieEleArr.length;
+
+  do {
+    _$ = cheerio.load(await getOnePageList(pageNo += 1));
+    const currentPageArr = _$(listClassName).toArray();
+    movieEleLength = currentPageArr.length;
+    Array.prototype.push.apply(movieEleArr, currentPageArr);
+  } while (movieEleLength);
+
+  return movieEleArr
+    .map(movie => {
+      if (!_$(movie).find('a.redBt').attr('href')) return null;
+      const name = _$(movie).find('.ui_movieType').attr('title');
+      const gewaraLink = 'http://www.gewara.com'
+        + _$(movie).find('a.redBt').attr('href');
+      return {
+        link: {
+          gewaraLink
+        }, //影片首页，同时也是购票链接
+        name, //名称,
+        movieId: {
+          gewaraMovieId: gewaraLink.replace(/.*\/movie\/([0-9]*)/, '$1'),
+        }
+      };
+    })
+    .filter(ele => !!ele);
 };
 
-(async() => {
-  const list = await getHotMovieList();
-  console.log(list.length);
-})();
-
 module.exports = {
-  getHotMovieList
+  getHotMovies
 };

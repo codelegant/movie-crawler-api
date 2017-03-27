@@ -4,8 +4,8 @@
   "description": "淘宝，猫眼，格瓦拉影票信息抓取接口",
   "main": "app.js",
   "scripts": {
-    "start": "node --harmony-async-await app.js",
-    "dev": "set DEBUG=debug & node-dev --harmony-async-await app.js"
+    "start": "node app.js",
+    "dev": "set DEBUG=db_debug,http_debug & node-dev app.js"
   },
   "repository": {
     "type": "git",
@@ -32,7 +32,8 @@
     "lodash.unionwith": "^4.6.0",
     "lodash.unset": "^4.5.2",
     "mongodb": "^2.2.11",
-    "phantom": "^3.0.2",
+    "mongoose": "^4.9.1",
+    "phantom": "^3.2.1",
     "request": "^2.75.0",
     "request-promise": "^4.1.1",
     "restify": "^4.2.0"

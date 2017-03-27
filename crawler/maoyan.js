@@ -1,4 +1,3 @@
-//--harmony-async-await
 const phantom = require('phantom');
 const rq = require('request-promise');
 const cheerio = require('cheerio');
@@ -10,107 +9,88 @@ const headers = {
 };
 
 /**
- * @return {Promise.<Array>}
+ * @return {Object}
  */
-const getCityList = () => {
-  let sitePage = null;
-  let phInstance = null;
+const getCities = async () => {
+  const instance = await phantom.create();
+  const page = await instance.createPage();
+  const status = await page.open('http://maoyan.com/');
 
-  return phantom
-    .create()
-    .then(instance => {
-      phInstance = instance;
-      return instance.createPage();
-    })
-    .then(page => {
-      sitePage = page;
-      return page.open('http://maoyan.com/');
-    })
-    .then(status => {
-      if (status !== 'success') return cliLog.error(`StatusCode:${status}`);
-      return sitePage.property('content');
-    })
-    .then(content => {
-      const $ = cheerio.load(content);
-      const cityList = {};
-      $('.city-list')
-        .find('li')
+  if (status !== 'success') {
+    cliLog.error(`无法获取 http://maoyan.com，statusCode：${status}`);
+  }
+
+  const content = await page.property('content');
+  await instance.exit();
+  const _$ = cheerio.load(content);
+  const cityList = {};
+
+  _$('.city-list')
+    .find('li')
+    .toArray()
+    .forEach(city => {
+      const key = _$(city).find('span').text();
+      cityList[key] = _$(city).find('a')
         .toArray()
-        .forEach(city => {
-          const key = $(city).find('span').text();
-          cityList[key] = $(city).find('a')
-                                 .toArray()
-                                 .map(a => ({
-                                   regionName: $(a).text(),
-                                   cityCode: Number($(a).attr('data-ci'))
-                                 }));
-        });
-      sitePage.close();
-      phInstance.exit();
-      return cityList;
-    })
-    .catch(e => cliLog.error(e));
+        .map(a => ({
+          regionName: _$(a).text(),
+          cityCode: Number(_$(a).attr('data-ci'))
+        }));
+    });
+
+  return cityList;
 };
 
 /**
  * @param cityCode {Number}
  * @return {Promise.<Object>}
  */
-const getHotMovieList = (cityCode = 30) => {
+const getHotMovies = async (cityCode = 30) => {
   const j = rq.jar();
   const uri = 'http://maoyan.com/films';
   const cookie = rq.cookie(`ci=${cityCode}`);//设置城市 cookie ，深圳
   j.setCookie(cookie, uri);
 
-  const getOnePageList = (offset = 0) => {
-    return rq({
+  const getOnePageList =
+    async (offset = 0) => await rq({
       uri,
       jar: j,
       headers,
-      qs: { showType: 1, sortId: 1, offset }
-    })
-      .then(htmlString => htmlString)
-      .catch(e => cliLog.error(e));
-  };
+      qs: {showType: 1, sortId: 1, offset}
+    }).catch(e => cliLog.error(e));
 
-  return (async() => {
-    let $ = cheerio.load(await getOnePageList());
-    let offset = 0;
-    const listClassName = '.movie-list';
-    const movieEleArr = $(listClassName).find('dd').toArray();
-    let movieEleLength = movieEleArr.length;
+  let offset = 0;
+  let _$ = cheerio.load(await getOnePageList());
+  const listClassName = '.movie-list';
+  const movieEleArr = _$(listClassName).find('dd').toArray();
+  let movieEleLength = movieEleArr.length;
 
-    do {
-      $ = cheerio.load(await getOnePageList(offset += 30));
-      const currentPageArr = $(listClassName).find('dd').toArray();
-      movieEleLength = currentPageArr.length;
-      Array.prototype.push.apply(movieEleArr, currentPageArr);
-    } while (movieEleLength);
+  do {
+    _$ = cheerio.load(await getOnePageList(offset += 30));
+    const currentPageArr = _$(listClassName).find('dd').toArray();
+    movieEleLength = currentPageArr.length;
+    Array.prototype.push.apply(movieEleArr, currentPageArr);
+  } while (movieEleLength);
 
-    return movieEleArr
-      .map(dd => {
-        const id = $(dd)
-          .find('.movie-item a')
-          .data('val')
-          .replace(/{[a-z]+:(\d+)}/gi, '$1');
-        return {
-          link: {
-            maoyanLink: `http://www.meituan.com/dianying/${id}?#content`
-          }, //影片首页，同时也是购票链接
-          name: $(dd).find('.movie-item-title').attr('title'), //名称,
-          movieId: {
-            maoyanId: id,
-          }
+  return movieEleArr
+    .map(dd => {
+      const id = _$(dd)
+        .find('.movie-item a')
+        .data('val')
+        .replace(/{[a-z]+:(\d+)}/gi, '$1');
+      return {
+        link: {
+          maoyanLink: `http://www.meituan.com/dianying/${id}?#content`
+        }, //影片首页，同时也是购票链接
+        name: _$(dd).find('.movie-item-title').attr('title'), //名称,
+        movieId: {
+          maoyanMovieId: id,
         }
-      });
-  })();
+      }
+    });
 };
-
-const getDetail = () => {
-};
-
 
 module.exports = {
-  getCityList,
-  getHotMovieList,
+  getCities,
+  getHotMovies,
 };

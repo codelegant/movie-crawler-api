@@ -1,10 +1,13 @@
 const restify = require('restify');
-const debug = require('debug')('debug');
+const http_debug = require('debug')('http_debug');
 
 const city = require('./routes/city');
 const movie = require('./routes/movie');
 
-const server = restify.createServer();
+const server = restify.createServer({
+  name: 'movie-cawler-api',
+  version: '0.0.1',
+});
 server.use(restify.queryParser());//使用 req.query，可以获取查询对象
 
 server.get(
@@ -35,5 +38,5 @@ server.put('/movies', movie.put);
 server.get('/movies/:id', movie.getById);
 
 server.listen(8080, () => {
-  debug('%s listening at %s', server.name, server.url);
+  http_debug('%s listening at %s', server.name, server.url);
 });

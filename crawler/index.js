@@ -10,21 +10,21 @@ const _merge = require('lodash.merge');
 const taobao = require('./taobao');
 const maoyan = require('./maoyan');
 const gewara = require('./gewara');
-const MovieDb = require('../db/MovieDb');
 const cliLog = require('../libs/cliLog');
+const City = require('../db/City');
 
 /**
  * @desc 返回数据格式或者对象格式的城市列表数据
  * @param type {String<'arr'|'obj'>}
  * @return {Object|Array}
  */
-const cities = async(type = 'arr') => {
+const cities = async (type = 'arr') => {
   const cityLists = await Promise.all([
-                                   taobao.getCityList(),
-                                   maoyan.getCityList(),
-                                 ])
-                                 .then(cityLists => cityLists)
-                                 .catch(e => cliLog.error(e));
+      taobao.getCities(),
+      maoyan.getCities(),
+    ])
+    .catch(e => cliLog.error(e));
+
   const _arrUnion = (taobao, maoyan) =>
     _unionWith(
       taobao,
@@ -44,6 +44,7 @@ const cities = async(type = 'arr') => {
         }
       }
     );
+
   let citiesObj = _mergeWith(
     cityLists[0],
     cityLists[1],
@@ -53,11 +54,14 @@ const cities = async(type = 'arr') => {
       }
     }
   );
+
   citiesObj = _mapValues(
     citiesObj,
     arr => _remove(arr, city => _isObject(city.cityCode))
   );
+
   if (type === 'obj') return citiesObj;
+
   const citiesArr = [];
   _mapKeys(citiesObj, (cities, key) => {
     for (const city of cities) {
@@ -65,6 +69,7 @@ const cities = async(type = 'arr') => {
       citiesArr.push(city);
     }
   });
+
   return citiesArr;
 };
 
@@ -75,23 +80,20 @@ const cities = async(type = 'arr') => {
  */
 const movies = async cityId => {
   //region 获取各个网站对就的 cityCode
-  const movieDb = new MovieDb();
-  const city = await movieDb.findById('cities', cityId);
+  const city = await City.findById(cityId);
   //endregion
 
   //region 抓取热门电影
-  const { taobaoCityCode, maoyanCityCode, gewaraCityCode }=city.cityCode;
-  const movieLists = await Promise
-    .all([
-      taobao.getHotMovieList(taobaoCityCode),
-      maoyan.getHotMovieList(maoyanCityCode),
-      gewara.getHotMovieList(gewaraCityCode),
+  const {taobaoCityCode, maoyanCityCode, gewaraCityCode} = city.cityCode;
+  const movieLists = await Promise.all([
+      taobao.getHotMovies(taobaoCityCode),
+      maoyan.getHotMovies(maoyanCityCode),
+      gewara.getHotMovies(gewaraCityCode),
     ])
-    .then(movieLists => movieLists)
     .catch(e => cliLog.error(e));
   let movies = _unionWith(movieLists[0], movieLists[1], movieLists[2],
     (src, target) => {
-      if (src.name == target.name) {
+      if (src.name === target.name) {
         target.link = _merge(src.link, target.link);
         target.movieId = _merge(src.movieId, target.movieId);
       }
@@ -99,6 +101,11 @@ const movies = async cityId => {
   return _remove(movies, movie => movie.link.taobaoLink);
   //endregion
 };
+
+(async () => {
+  const a = await cities();
+  console.log(a);
+})();
 
 module.exports = {
   cities,

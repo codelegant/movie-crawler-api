@@ -3,28 +3,22 @@ const debug = require('debug')('debug');
 
 const cawler = require('../crawler/index');
 const cliLog = require('../libs/cliLog');
-const MovieDb = require('../db/MovieDb');
+const Movie = require('../db/Movie');
 
 /**
  * @desc 使用 cityId 从数据库中读取热门电影列表
  */
-const getByCityIdFromDb = async(req, res, next) => {
+const getByCityIdFromDb = async (req, res, next) => {
   try {
-    const { cityId } = req.query;
-    if (! cityId) {
+    const {cityId} = req.query;
+    if (!cityId)
       return next(new restify.InvalidArgumentError('只接受 cityId 作为参数'));
-    }
 
-    const movieDb = new MovieDb();
+    const movies = await Movie.find();
+    if (!movies.length) return next();
 
-    const moviesExists = await movieDb.collectionExists('movies', false);
-    if (! moviesExists) {
-      await movieDb.client.then(db => db.createCollection('movies'));
-      return next();
-    }
-
-    const docs = await movieDb.findMany('movies', true, { cityId });
-
+    const movie = new Movie({cityId});
+    const docs = await movie.findByCityId();
     return docs.length ? res.json(200, docs) : next();
 
   } catch (e) {
@@ -36,45 +30,22 @@ const getByCityIdFromDb = async(req, res, next) => {
 /**
  * @desc 使用 cityId 从爬虫中读取热门电影列表
  */
-const getByCityIdFromCawler = async(req, res, next) => {
+const getByCityIdFromCawler = async (req, res, next) => {
   try {
-    const { cityId } = req.query;
-    if (! cityId) {
+    const {cityId} = req.query;
+    if (!cityId)
       return next(new restify.InvalidArgumentError('只接受 cityId 作为参数'));
-    }
 
-    let movies = await cawler.movies(cityId);
-    movies = movies.map(ele => {
-      ele.cityId = cityId;
-      ele.lastUpdated = new Date();
-      return ele;
-    });
+    const movies = await cawler.movies(cityId);
 
-    const movieDb = new MovieDb();
+    const docs = await Movie.create(
+      movies.map(
+        movie => Object.assign(movie, {cityId, lastUpdated: new Date()})
+      )
+    );
 
-    //region 索引是否存在
-    const lastUpdatedExists
-      = await movieDb.indexExists('movies', ['lastUpdated_1'], false);
-    //endregion
-    //region 存入数据库，插入索引
-    const result = await movieDb.insert('movies', movies, lastUpdatedExists);
-
-    ! lastUpdatedExists
-    && await movieDb
-      .client
-      .then(
-        db => db
-          .collection('movies')
-          .createIndex(
-            { lastUpdated: 1 },
-            { expireAfterSeconds: 3600 }
-          )
-          .then(() => db.close())
-      );
-    //endregion
-
-    return result.ops.length
-      ? res.json(200, result.ops)
+    return docs.length
+      ? res.json(200, docs)
       : next(new restify.NotFoundError('未查询到热门电影列表'));
   } catch (e) {
     cliLog.error(e);
@@ -85,15 +56,15 @@ const getByCityIdFromCawler = async(req, res, next) => {
 /**
  * @desc 使用 id 获取电影详情
  */
-const getById = async(req, res, next) => {
+const getById = async (req, res, next) => {
   try {
-    const { id } = req.query;
-    if (! id) return next(new restify.NotFoundError('未查询到电影信息'));
+    const {id} = req.params;
+    if (!id) return next(new restify.NotFoundError('未查询到电影信息'));
 
-    const movieDb = new MovieDb();
-    const doc = await movieDb.findById('movies', id);
+    const doc = await Movie.findById(id);
 
     if (doc) return res.json(200, doc);
+
     return next(new restify.NotFoundError('未查询到电影信息'));
   } catch (e) {
     cliLog.error(e);
@@ -104,46 +75,24 @@ const getById = async(req, res, next) => {
 /**
  * @desc 使用 cityId 重新抓取热门电影并存储
  */
-const put = async(req, res, next) => {
+const put = async (req, res, next) => {
   try {
-    const { cityId } = req.query;
-    if (! cityId) {
+    const {cityId} = req.query;
+    if (!cityId)
       return next(new restify.InvalidArgumentError('只接受 cityId 作为参数'));
-    }
 
-    let movies = await cawler.movies(cityId);
-    movies = movies.map(ele => {
-      ele.cityId = cityId;
-      ele.lastUpdated = new Date();
-      return ele;
-    });
+    const deleteResult = await Movie.deleteMany({cityId});
+    if (deleteResult.result.ok !== 1)
+      return next(new restify.InternalServerError('更新电影列表信息失败'));
 
-    const movieDb = new MovieDb();
-    await movieDb.deleteMany('movies', false, { cityId });
+    const movies = await cawler.movies(cityId);
 
-    //region 索引是否存在
-    const lastUpdatedExists
-      = await movieDb.indexExists('movies', ['lastUpdated_1'], false);
-    //endregion
-
-    //region 存入数据库，插入索引
-    const result = await movieDb.insert('movies', movies, lastUpdatedExists);
-
-    ! lastUpdatedExists
-    && await movieDb
-      .client
-      .then(
-        db => db
-          .collection('movies')
-          .createIndex(
-            { lastUpdated: 1 },
-            { expireAfterSeconds: 3600 }
-          )
-          .then(() => db.close())
-      );
-    //endregion
-
-    return res.send(result.ops.length ? 201 : 204);
+    const docs = await Movie.create(
+      movies.map(
+        movie => Object.assign(movie, {cityId, lastUpdated: new Date()})
+      )
+    );
+    return res.send(docs.length ? 201 : 204);
 
   } catch (e) {
     cliLog.error(e);

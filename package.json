@@ -31,7 +31,6 @@
     "lodash.remove": "^4.7.0",
     "lodash.unionwith": "^4.6.0",
     "lodash.unset": "^4.5.2",
-    "mongodb": "^2.2.11",
     "mongoose": "^4.9.1",
     "phantom": "^3.2.1",
     "request": "^2.75.0",

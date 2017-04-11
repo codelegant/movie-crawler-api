@@ -11,15 +11,16 @@ const headers = {
  * @return {Promise.<Array>}
  */
 const getHotMovies = async (cityCode = 440300) => {
-  const j = rq.jar();
   const uri = 'http://www.gewara.com/movie/searchMovie.xhtml';
   const cookie = rq.cookie(`citycode=${cityCode}`);//设置城市 cookie，深圳
-  j.setCookie(cookie, uri);
+
+  const jar = rq.jar();
+  jar.setCookie(cookie, uri);
 
   const getOnePageList =
     async (pageNo = 0) => await rq({
       uri,
-      jar: j,
+      jar,
       headers,
       qs: {pageNo}
     });

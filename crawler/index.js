@@ -102,11 +102,6 @@ const movies = async cityId => {
   //endregion
 };
 
-(async () => {
-  const a = await cities();
-  console.log(a);
-})();
-
 module.exports = {
   cities,
   movies,

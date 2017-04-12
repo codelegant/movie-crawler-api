@@ -1,4 +1,4 @@
-const rq = require('request-promise');
+const rq = require('request-promise-native');
 const cheerio = require('cheerio');
 const cliLog = require('../libs/cliLog');
 const headers = {

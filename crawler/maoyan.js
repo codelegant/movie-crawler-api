@@ -1,5 +1,5 @@
 const phantom = require('phantom');
-const rq = require('request-promise');
+const rq = require('request-promise-native');
 const cheerio = require('cheerio');
 const cliLog = require('../libs/cliLog');
 
@@ -89,6 +89,11 @@ const getHotMovies = async (cityCode = 30) => {
       }
     });
 };
+
+(async()=>{
+  const cities=await getCities();
+  console.log(cities);
+})();
 
 module.exports = {
   getCities,

@@ -12,7 +12,10 @@
     "url": "git+https://github.com/codelegant/moive-crawler-api.git"
   },
   "keywords": [
-    "request","request-promise","cheerio","phantom"
+    "request",
+    "request-promise",
+    "cheerio",
+    "phantom"
   ],
   "author": "codelegant laichuanfeng@hotmail.com",
   "license": "MIT",
@@ -32,9 +35,9 @@
     "lodash.unionwith": "^4.6.0",
     "lodash.unset": "^4.5.2",
     "mongoose": "^4.9.1",
-    "phantom": "^3.2.1",
+    "phantom": "^4.0.2",
     "request": "^2.75.0",
-    "request-promise": "^4.1.1",
+    "request-promise-native": "^1.0.3",
     "restify": "^4.2.0"
   },
   "devDependencies": {

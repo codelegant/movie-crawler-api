@@ -1,9 +1,9 @@
-const rq = require('request-promise');
+const rq = require('request-promise-native');
 const cheerio = require('cheerio');
 const cliLog = require('../libs/cliLog');
 const headers = {
   'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)' +
-  ' AppleWebKit/537.36 (KHTML, like Gecko) Chrome/53.0.2785.143 Safari/537.36'
+  ' AppleWebKit/537.36 (KHTML, like Gecko) Chrome/53.0.2785.143 Safari/537.36',
 };
 const host = 'https://dianying.taobao.com';
 
@@ -12,7 +12,7 @@ const host = 'https://dianying.taobao.com';
  */
 const getCities = async () => {
   const timeStampStr = Date.now().toString();
-  const res = await await rq({
+  const res = await rq({
     uri: `${host}/cityAction.json`,
     method: 'GET',
     qs: {
@@ -145,6 +145,7 @@ const getDetail = async ({
         type: _$(schedule).find('.hall-type').text().trim(),
         name: _$(schedule).find('.hall-name').text().trim(),
         price: _$(schedule).find('.hall-price').find('em').text(),
+
         buyLink: _$(schedule).find('.seat-btn').attr('href'),
       }));
   };
@@ -167,7 +168,7 @@ const getDetail = async ({
       cinemaId,
       date,
       ts: Date.now(),
-      n_s: 'new'
+      n_s: 'new',
     },
     transform: body => cheerio.load(body),
   });
@@ -192,18 +193,20 @@ const getDetail = async ({
       const $_CinemaBarWrap = _$('.cinemabar-wrap');
       $_CinemaBarWrap.find('h4,a').remove();
       return $_CinemaBarWrap.text().split(' ')[0].trim().replace(/.*：(.*)/, '$1');
-    })()
+    })(),
   };
   return {areas, cinemas, schedules, current};
 
 };
 
 (async () => {
-  const detail = await getDetail({
-    taobaoCityId: 440300,
-    cityName: '深圳',
-    taobaoMovieId: 155476,
-  });
+  const cities=await getCities();
+  console.log(cities);
+  // const detail = await getDetail({
+  //   taobaoCityId: 440300,
+  //   cityName: '深圳',
+  //   taobaoMovieId: 155476,
+  // });
 })();
 
 module.exports = {

@@ -3,7 +3,6 @@
 [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg?style=flat-square)](https://standardjs.com)
 [![node](https://img.shields.io/badge/node-v8.0.0-blue.svg?style=flat-square)]()
 [![npm](https://img.shields.io/badge/npm-v5.0.2-blue.svg?style=flat-square)]()
-- node v7.3.0 及以上
 - 使用配置文件启动 mongoDB，根目录执行 `mongod -f .\db\db.conf` || `mongod --config .\db\db.conf`
 - 超级管理员
     1. 切换数据库 `use admin`

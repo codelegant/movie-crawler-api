@@ -1,5 +1,5 @@
 /* eslint-disable camelcase */
-const rq = require('request-promise-native')
+const requestPromise = require('util').promisify(require('request'))
 const cheerio = require('cheerio')
 const headers = {
   'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)' +
@@ -12,7 +12,7 @@ const host = 'https://dianying.taobao.com'
  */
 const getCities = async () => {
   const timeStampStr = Date.now().toString()
-  const res = await rq({
+  const res = await requestPromise({
     uri: `${host}/cityAction.json`,
     method: 'GET',
     qs: {
@@ -25,7 +25,7 @@ const getCities = async () => {
     headers
   })
 
-  return JSON.parse(res.replace(/jsonp\d{2,3}\((.+)\);$/, '$1'))['returnValue']
+  return JSON.parse(res.body.replace(/jsonp\d{2,3}\((.+)\);$/, '$1'))['returnValue']
 }
 
 /**
@@ -33,16 +33,16 @@ const getCities = async () => {
  * @return {Array}
  */
 const getHotMovies = async (city = 440300) => {
-  const _$ = await rq({
+  const res = await requestPromise({
     uri: `${host}/showList.htm`,
     method: 'GET',
     qs: {
       city, // 深圳
       n_s: 'new'
     },
-    headers,
-    transform: body => cheerio.load(body)
+    headers
   })
+  const _$ = cheerio.load(res.body)
 
   return _$(_$('.tab-movie-list')[0])
     .find('.movie-card-wrap')
@@ -93,13 +93,13 @@ const getHotMovies = async (city = 440300) => {
  * @return {Promise.<Object>}
  */
 const getDetail = async ({// eslint-disable-line
-    taobaoCityId,
-    cityName,
-    taobaoMovieId,
-    regionName,
-    cinemaId,
-    date
-  }) => {
+  taobaoCityId,
+  cityName,
+  taobaoMovieId,
+  regionName,
+  cinemaId,
+  date
+}) => {
   /**
    * 获取当前城市的区域信息
    * @param htmlStr {Element}
@@ -153,11 +153,11 @@ const getDetail = async ({// eslint-disable-line
   const cityNameBase64 = Buffer.from(cityName).toString('base64')
   // 设置城市信息 cookie
 
-  const jar = rq.jar()
-  const cookie = rq.cookie(`tb_city=${taobaoCityId};tb_cityName=${cityNameBase64}`)
+  const jar = requestPromise.jar()
+  const cookie = requestPromise.cookie(`tb_city=${taobaoCityId};tb_cityName=${cityNameBase64}`)
   jar.setCookie(cookie, uri)
 
-  const _$ = await rq({
+  const res = await requestPromise({
     uri,
     jar,
     headers,
@@ -168,9 +168,9 @@ const getDetail = async ({// eslint-disable-line
       date,
       ts: Date.now(),
       n_s: 'new'
-    },
-    transform: body => cheerio.load(body)
+    }
   })
+  const _$ = cheerio.load(res.body)
 
   const [areaObj, cinemasObj, datesObj] = _$('.select-tags').toArray()
   const areas = getAreas(areaObj)
@@ -198,8 +198,9 @@ const getDetail = async ({// eslint-disable-line
 };
 
 (async () => {
-  const cities = await getCities()
-  console.log(cities)
+  // const cities = await getCities()
+  // const name = await getHotMovies()
+  // console.log(name)
   // const detail = await getDetail({
   //   taobaoCityId: 440300,
   //   cityName: '深圳',

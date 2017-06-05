@@ -1,6 +1,6 @@
-const rq = require('request-promise-native')
+const requestPromise = require('util').promisify(require('request'))
 const cheerio = require('cheerio')
-const cliLog = require('../libs/cliLog')
+// const cliLog = require('../libs/cliLog')
 const headers = {
   'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)' +
   ' AppleWebKit/537.36 (KHTML, like Gecko) Chrome/53.0.2785.143 Safari/537.36'
@@ -12,18 +12,20 @@ const headers = {
  */
 const getHotMovies = async (cityCode = 440300) => {
   const uri = 'http://www.gewara.com/movie/searchMovie.xhtml'
-  const cookie = rq.cookie(`citycode=${cityCode}`)// 设置城市 cookie，深圳
+  const cookie = requestPromise.cookie(`citycode=${cityCode}`)// 设置城市 cookie，深圳
 
-  const jar = rq.jar()
+  const jar = requestPromise.jar()
   jar.setCookie(cookie, uri)
 
-  const getOnePageList =
-    async (pageNo = 0) => await rq({
+  const getOnePageList = async (pageNo = 0) => {
+    const res = await requestPromise({
       uri,
       jar,
       headers,
       qs: {pageNo}
     })
+    return res.body
+  }
 
   let pageNo = 0
   let _$ = cheerio.load(await getOnePageList())

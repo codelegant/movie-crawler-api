@@ -1,5 +1,5 @@
 const phantom = require('phantom')
-const rq = require('request-promise-native')
+const requestPromise = require('util').promisify(require('request'))
 const cheerio = require('cheerio')
 const cliLog = require('../libs/cliLog')
 
@@ -31,11 +31,11 @@ const getCities = async () => {
     .forEach(city => {
       const key = _$(city).find('span').text()
       cityList[key] = _$(city).find('a')
-        .toArray()
-        .map(a => ({
-          regionName: _$(a).text(),
-          cityCode: Number(_$(a).attr('data-ci'))
-        }))
+                              .toArray()
+                              .map(a => ({
+                                regionName: _$(a).text(),
+                                cityCode: Number(_$(a).attr('data-ci'))
+                              }))
     })
 
   return cityList
@@ -46,18 +46,20 @@ const getCities = async () => {
  * @return {Promise.<Object>}
  */
 const getHotMovies = async (cityCode = 30) => {
-  const j = rq.jar()
+  const j = requestPromise.jar()
   const uri = 'http://maoyan.com/films'
-  const cookie = rq.cookie(`ci=${cityCode}`)// 设置城市 cookie ，深圳
+  const cookie = requestPromise.cookie(`ci=${cityCode}`)// 设置城市 cookie ，深圳
   j.setCookie(cookie, uri)
 
-  const getOnePageList =
-    async (offset = 0) => await rq({
+  const getOnePageList = async (offse = 0) => {
+    const res = await requestPromise({
       uri,
       jar: j,
       headers,
       qs: {showType: 1, sortId: 1, offset}
     }).catch(e => cliLog.error(e))
+    return res.body
+  }
 
   let offset = 0
   let _$ = cheerio.load(await getOnePageList())
@@ -90,9 +92,9 @@ const getHotMovies = async (cityCode = 30) => {
     })
 };
 
-(async() => {
-  const cities = await getCities()
-  // console.log(cities)
+(async () => {
+  const cities = await getHotMovies()
+  console.log(cities)
 })()
 
 module.exports = {

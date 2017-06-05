@@ -1,5 +1,7 @@
+
 ### 淘宝，猫眼，格瓦拉影票信息抓取接口
-- node v7.0.0 及以上，并使用 `--harmony-async-await` 模式
+[![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg?style=flat-square)](https://standardjs.com)
+- node v7.3.0 及以上
 - 使用配置文件启动 mongoDB，根目录执行 `mongod -f .\db\db.conf` || `mongod --config .\db\db.conf`
 - 超级管理员
     1. 切换数据库 `use admin`

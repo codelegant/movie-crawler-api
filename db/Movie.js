@@ -3,9 +3,8 @@
  * Email: laichuanfeng@hotmail.com
  * homepage: laichuanfeng.com
  */
-const mongoose = require('mongoose');
-const Schema = mongoose.Schema;
-const connect = require('./connect')();
+const mongoose = require('mongoose')
+const Schema = mongoose.Schema
 
 const movieSchema = new Schema({
   name: String,
@@ -15,19 +14,18 @@ const movieSchema = new Schema({
   movieId: {
     gewaraMovieId: String,
     maoyanMovieId: String,
-    taobaoMovieId: String,
+    taobaoMovieId: String
   },
   cityId: String,
-  lastUpdated: Date,
-});
+  lastUpdated: Date
+})
 
 movieSchema.methods.findByCityId = function () {
-  return this.model('Movie').find({cityId: this.cityId});
-};
+  return this.model('Movie').find({cityId: this.cityId})
+}
 
-movieSchema.index({lastUpdated: 1}, {expireAfterSeconds: 3600});
+movieSchema.index({lastUpdated: 1}, {expireAfterSeconds: 3600})
 
-const Movie = mongoose.model('Movie', movieSchema);
+const Movie = mongoose.model('Movie', movieSchema)
 
-module.exports = Movie;
-
+module.exports = Movie
